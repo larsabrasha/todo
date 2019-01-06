@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthenticationMiddleware } from './authentication.middleware';
 import { TodosController } from './todos/todos.controller';
 
 @Module({
@@ -8,4 +9,8 @@ import { TodosController } from './todos/todos.controller';
   controllers: [AppController, TodosController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthenticationMiddleware).forRoutes('*');
+  }
+}

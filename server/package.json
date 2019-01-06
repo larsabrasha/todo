@@ -24,6 +24,7 @@
     "@nestjs/microservices": "^5.4.0",
     "@nestjs/testing": "^5.4.0",
     "@nestjs/websockets": "^5.4.0",
+    "@okta/jwt-verifier": "0.0.14",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.2.2"
