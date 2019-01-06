@@ -1,9 +1,10 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { OktaAuthModule } from '@okta/okta-angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AuthInterceptor } from './auth-interceptor';
 import { ProfileComponent } from './profile/profile.component';
 import { TodosComponent } from './todos/todos.component';
 
@@ -21,7 +22,9 @@ const oktaConfig = {
     HttpClientModule,
     OktaAuthModule.initAuth(oktaConfig),
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
