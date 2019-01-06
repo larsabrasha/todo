@@ -10,7 +10,7 @@ import { TodosComponent } from './todos/todos.component';
 
 const oktaConfig = {
   issuer: 'https://dev-864778.oktapreview.com/oauth2/default',
-  redirectUri: 'http://localhost:4200/implicit/callback',
+  redirectUri: window.location.origin + '/implicit/callback',
   clientId: '0oahkwubz9Vyq8CPj0h7',
 };
 
