@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  todo_client:
+    image: todo_client:latest
+    restart: unless-stopped
+    depends_on:
+      - todo_server
+    ports:
+      - "4200:80"
+
+  todo_server:
+    image: todo_server:latest
+    restart: unless-stopped
+
+  caddy:
+    image: abiosoft/caddy:no-stats
+    container_name: caddy
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/Caddyfile
+      - .caddy:/root/.caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - ACME_AGREE=true

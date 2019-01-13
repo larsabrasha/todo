@@ -1,17 +1,11 @@
 import { Injectable, MiddlewareFunction, NestMiddleware } from '@nestjs/common';
+import { oktaConfig } from './environments/environment';
 // tslint:disable-next-line:no-var-requires
 const OktaJwtVerifier = require('@okta/jwt-verifier');
 
 @Injectable()
 export class AuthenticationMiddleware implements NestMiddleware {
-  oktaJwtVerifier = new OktaJwtVerifier({
-    issuer: 'https://dev-864778.oktapreview.com/oauth2/default',
-    clientId: '0oahkwubz9Vyq8CPj0h7',
-    assertClaims: {
-      aud: 'api://default',
-      cid: '0oahkwubz9Vyq8CPj0h7',
-    },
-  });
+  oktaJwtVerifier = new OktaJwtVerifier(oktaConfig);
 
   resolve(...args: any[]): MiddlewareFunction {
     return (req, res, next) => {
