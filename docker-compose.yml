@@ -8,10 +8,17 @@ services:
       - todo_server
     ports:
       - "4200:80"
+    environment:
+      - OKTA_ISSUER=$OKTA_ISSUER
+      - OKTA_REDIRECT_URI=$OKTA_REDIRECT_URI
+      - OKTA_CLIENT=$OKTA_CLIENT
 
   todo_server:
     image: todo_server:latest
     restart: unless-stopped
+    environment:
+      - OKTA_ISSUER=$OKTA_ISSUER
+      - OKTA_CLIENT=$OKTA_CLIENT
 
   caddy:
     image: abiosoft/caddy:no-stats
