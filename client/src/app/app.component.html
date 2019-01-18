@@ -1,4 +1,19 @@
-<button *ngIf="!isAuthenticated" (click)="login()">Login</button>
-<button *ngIf="isAuthenticated" (click)="logout()">Logout</button>
+<!-- As a link -->
+<nav class="navbar navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" [routerLink]="[isAuthenticated ? '/todos' : '/']"
+      >Todo</a
+    >
 
-<router-outlet></router-outlet>
+    <span class="ml-auto">
+      <button *ngIf="!isAuthenticated" class="btn btn-light" (click)="login()">
+        Login
+      </button>
+      <button *ngIf="isAuthenticated" class="btn btn-light" (click)="logout()">
+        Logout
+      </button>
+    </span>
+  </div>
+</nav>
+
+<div class="container"><router-outlet></router-outlet></div>

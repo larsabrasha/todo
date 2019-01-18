@@ -1,3 +1,5 @@
-<ul>
-  <li *ngFor="let todo of todos">{{todo.title}}</li>
-</ul>
+<div class="pt-3">
+  <ul class="list-group" style="max-width: 500px">
+    <li *ngFor="let todo of todos" class="list-group-item">{{ todo.title }}</li>
+  </ul>
+</div>
