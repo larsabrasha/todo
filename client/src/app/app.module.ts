@@ -13,9 +13,10 @@ import { AuthInterceptor } from './auth-interceptor';
 import { ProfileComponent } from './profile/profile.component';
 import { appState } from './store/app.state';
 import { TodosComponent } from './todos/todos.component';
+import { SourceEditorComponent } from './todos/source-editor/source-editor.component';
 
 @NgModule({
-  declarations: [AppComponent, ProfileComponent, TodosComponent],
+  declarations: [AppComponent, ProfileComponent, TodosComponent, SourceEditorComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
