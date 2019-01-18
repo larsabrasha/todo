@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
 import { Todo } from '../models/todo';
-import { TodosService } from '../todos.service';
+import { IAppState } from '../store/app.state';
+import { GetTodos } from '../store/todos/todos.actions';
 
 @Component({
   selector: 'app-todos',
@@ -9,11 +11,15 @@ import { TodosService } from '../todos.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodosComponent implements OnInit {
-  todos: Todo[];
+  @Select((state: IAppState) => state.todos.todoIds)
+  todoIds$: number[];
 
-  constructor(private todosService: TodosService) {}
+  @Select((state: IAppState) => state.todos.todos)
+  todos$: { [id: number]: Todo };
+
+  constructor(private store: Store) {}
 
   ngOnInit() {
-    this.todosService.getTodos().subscribe(x => (this.todos = x));
+    this.store.dispatch(new GetTodos());
   }
 }

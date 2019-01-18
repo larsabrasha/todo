@@ -1,5 +1,11 @@
 <div class="pt-3">
-  <ul class="list-group" style="max-width: 500px">
-    <li *ngFor="let todo of todos" class="list-group-item">{{ todo.title }}</li>
+  <ul
+    class="list-group"
+    style="max-width: 500px"
+    *ngIf="(todos$ | async) as todos"
+  >
+    <li *ngFor="let todoId of (todoIds$ | async)" class="list-group-item">
+      {{ todos[todoId].title }}
+    </li>
   </ul>
 </div>
