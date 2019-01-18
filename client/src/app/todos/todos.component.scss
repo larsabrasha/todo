@@ -7,3 +7,9 @@
 .bg-unchecked {
   background: white !important;
 }
+
+input:hover,
+input:focus {
+  opacity: 1 !important;
+  transition: 0.2s;
+}
