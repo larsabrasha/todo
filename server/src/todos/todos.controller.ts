@@ -1,30 +1,45 @@
-import { Body, Controller, Get, Header, Put, Response } from '@nestjs/common';
+import { Body, Controller, Get, Header, Put } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { settings } from 'src/environments/environment';
 import { Todo } from 'src/models/todo';
+const parser = require('todotxt-parser');
 
 @Controller('todos')
 export class TodosController {
   sourceFilePath: string;
 
   constructor() {
+    console.log(settings.sourceFilePath);
     this.sourceFilePath = this.getAbsoluteFilePath(settings.sourceFilePath);
+    console.log(this.sourceFilePath);
   }
 
   @Get()
   getTodos(): Todo[] {
-    return [
-      { id: 1, title: 'att göra 1', checked: false },
-      { id: 2, title: 'att göra 2', checked: false },
-      { id: 3, title: 'att göra 3', checked: true },
-    ];
+    const source = this.readFileAsString(this.sourceFilePath);
+    return this.parseSource(source);
+  }
+
+  parseSource(source: string): Todo[] {
+    // TODO use my own parse instead. (x )?(\([A-Z]\) )?(\d{4}\-\d{2}\-\d{2} )?(\d{4}\-\d{2}\-\d{2} )?(.*)
+    const tasks = parser.relaxed(source.trim());
+    console.log(tasks);
+
+    const todos = tasks.map((x, index) => ({
+      id: index + 1,
+      title: x.text,
+      checked: x.complete,
+    }));
+    console.log(todos);
+
+    return todos;
   }
 
   @Get('source')
   @Header('content-type', 'text/plain')
-  getSource(@Response() res) {
-    res.send(this.readFileAsString(this.sourceFilePath));
+  getSource() {
+    return this.readFileAsString(this.sourceFilePath);
   }
 
   @Put('source')
