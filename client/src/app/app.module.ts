@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { OktaAuthModule } from '@okta/okta-angular';
+import { GravatarModule } from 'ngx-gravatar';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,6 +26,7 @@ import { TodosComponent } from './todos/todos.component';
     NgxsReduxDevtoolsPluginModule.forRoot({
       disabled: environment.production,
     }),
+    GravatarModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
