@@ -1,7 +1,7 @@
 import { Action, State, StateContext } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 import { TodosService } from 'src/app/todos.service';
-import { GetTodos } from './todos.actions';
+import { GetTodos, ToggleChecked } from './todos.actions';
 import { defaults, TodosStateModel } from './todos.model';
 
 @State<TodosStateModel>({
@@ -24,5 +24,20 @@ export class TodosState {
         });
       })
     );
+  }
+
+  @Action(ToggleChecked)
+  toggleChecked(context: StateContext<TodosStateModel>, action: ToggleChecked) {
+    const state = context.getState();
+
+    context.patchState({
+      todos: {
+        ...state.todos,
+        [action.todo.id]: {
+          ...state.todos[action.todo.id],
+          checked: !state.todos[action.todo.id].checked,
+        },
+      },
+    });
   }
 }

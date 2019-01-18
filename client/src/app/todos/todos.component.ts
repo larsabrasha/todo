@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Todo } from '../models/todo';
 import { IAppState } from '../store/app.state';
-import { GetTodos } from '../store/todos/todos.actions';
+import { GetTodos, ToggleChecked } from '../store/todos/todos.actions';
 
 @Component({
   selector: 'app-todos',
@@ -21,5 +21,9 @@ export class TodosComponent implements OnInit {
 
   ngOnInit() {
     this.store.dispatch(new GetTodos());
+  }
+
+  toggle(todo: Todo) {
+    this.store.dispatch(new ToggleChecked(todo));
   }
 }

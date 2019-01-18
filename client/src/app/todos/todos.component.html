@@ -1,11 +1,23 @@
 <div class="pt-3">
-  <ul
+  <div
     class="list-group"
     style="max-width: 500px"
     *ngIf="(todos$ | async) as todos"
   >
-    <li *ngFor="let todoId of (todoIds$ | async)" class="list-group-item">
-      {{ todos[todoId].title }}
-    </li>
-  </ul>
+    <ng-container *ngFor="let todoId of (todoIds$ | async)">
+      <a
+        href=""
+        *ngIf="todos[todoId] as todo"
+        class="list-group-item list-group-item-action"
+        [class.bg-checked]="todo.checked"
+        [class.bg-unchecked]="todo.checked == false"
+        [ngStyle]="{
+          'text-decoration': todo.checked ? 'line-through' : 'none'
+        }"
+        (click)="toggle(todo); $event.preventDefault()"
+      >
+        {{ todo.title }}
+      </a>
+    </ng-container>
+  </div>
 </div>
