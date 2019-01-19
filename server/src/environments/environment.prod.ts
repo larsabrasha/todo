@@ -6,7 +6,3 @@ export const oktaConfig = {
     cid: '$OKTA_CLIENT',
   },
 };
-
-export const settings = {
-  sourceFilePath: './data/todo.txt',
-};

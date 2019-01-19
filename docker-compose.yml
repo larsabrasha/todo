@@ -19,6 +19,8 @@ services:
     environment:
       - OKTA_ISSUER=$OKTA_ISSUER
       - OKTA_CLIENT=$OKTA_CLIENT
+    volumes:
+      - ${PWD}/todo.txt:/usr/src/app/data/todo.txt
 
   caddy:
     image: abiosoft/caddy:no-stats

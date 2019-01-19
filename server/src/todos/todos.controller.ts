@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Header, Param, Post, Put } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import { settings } from 'src/environments/environment';
-import { Todo } from 'src/models/todo';
+import { Todo } from '../models/todo';
 
 @Controller('todos')
 export class TodosController {
@@ -10,7 +9,7 @@ export class TodosController {
   regex = /(x)?\s?(\([A-Z]\))?\s?(\d{4}\-\d{2}\-\d{2})?\s?(\d{4}\-\d{2}\-\d{2})?\s?(.*)/;
 
   constructor() {
-    this.sourceFilePath = this.getAbsoluteFilePath(settings.sourceFilePath);
+    this.sourceFilePath = this.getAbsoluteFilePath('./data/todo.txt');
     this.ensureDirectoryExistence(this.sourceFilePath);
   }
 
@@ -40,16 +39,18 @@ export class TodosController {
 
     const sourceRows = source.trim().split('\n');
 
-    return sourceRows.map((x, index) => {
-      const m = this.regex.exec(x.trim());
-      return m !== null
-        ? {
-            index,
-            title: m[5],
-            checked: m[1] === 'x' ? true : false,
-          }
-        : null;
-    }).filter(x => x != null);
+    return sourceRows
+      .map((x, index) => {
+        const m = this.regex.exec(x.trim());
+        return m !== null
+          ? {
+              index,
+              title: m[5],
+              checked: m[1] === 'x' ? true : false,
+            }
+          : null;
+      })
+      .filter(x => x != null);
   }
 
   @Post()
