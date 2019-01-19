@@ -22,7 +22,7 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <input
         type="text"
-        class="form-control"
+        class="form-control gentle"
         [placeholder]="placeholder"
         formControlName="title"
         style="opacity: 0.5"
@@ -32,7 +32,29 @@
     </form>
   </div>
 
-  <a [routerLink]="['/todos/source-editor']" class="mt-3 ml-auto text-muted"
-    ><small>Edit source</small></a
-  >
+  <div class="dropdown ml-auto mt-3 ">
+    <button
+      class="btn btn-sm btn-light gentle"
+      type="button"
+      id="dropdownMenu"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+      style="opacity: 0.25"
+    >
+      <i class="fas fa-ellipsis-h"></i>
+    </button>
+    <div
+      class="dropdown-menu dropdown-menu-right"
+      aria-labelledby="dropdownMenu"
+    >
+      <a href="" class="dropdown-item" (click)="$event.preventDefault()"
+        ><i class="fas fa-trash fa-fw"></i> Delete completed</a
+      >
+      <div class="dropdown-divider"></div>
+      <a [routerLink]="['/todos/source-editor']" class="dropdown-item"
+        ><i class="fas fa-edit fa-fw"></i> Edit source</a
+      >
+    </div>
+  </div>
 </div>
