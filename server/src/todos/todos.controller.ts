@@ -38,7 +38,7 @@ export class TodosController {
   @Get()
   getTodos(): Todo[] {
     const source = this.readFileAsString(this.sourceFilePath);
-    return this.parseSource(source);
+    return source != null ? this.parseSource(source) : [];
   }
 
   parseSource(source: string): Todo[] {
@@ -62,7 +62,12 @@ export class TodosController {
 
   @Post()
   addTodo(@Body() todo: Todo): Todo[] {
-    fs.appendFileSync(this.sourceFilePath, `\n${todo.title}`);
+    const source = this.readFileAsString(this.sourceFilePath);
+
+    fs.appendFileSync(
+      this.sourceFilePath,
+      `${source != null ? '\n' : ''}${todo.title}`
+    );
     return this.getTodos();
   }
 
@@ -98,7 +103,9 @@ export class TodosController {
   }
 
   readFileAsString(filePath: string) {
-    return fs.existsSync(filePath) ? fs.readFileSync(filePath).toString() : '';
+    return fs.existsSync(filePath)
+      ? fs.readFileSync(filePath).toString()
+      : null;
   }
 
   ensureDirectoryExistence(filePath: string) {
