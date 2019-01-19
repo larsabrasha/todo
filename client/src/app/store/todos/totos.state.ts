@@ -59,5 +59,23 @@ export class TodosState {
         },
       },
     });
+
+    return this.todoService
+      .postTodo({
+        id: 0,
+        title: action.title,
+        checked: false,
+      })
+      .pipe(
+        tap(todos => {
+          context.patchState({
+            todoIds: todos.map(x => x.id),
+            todos: todos.reduce((prev, cur) => {
+              prev[cur.id] = cur;
+              return prev;
+            }, {}),
+          });
+        })
+      );
   }
 }

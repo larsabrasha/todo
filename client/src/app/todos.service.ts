@@ -12,4 +12,8 @@ export class TodosService {
   getTodos(): Observable<Todo[]> {
     return this.httpClient.get<Todo[]>('api/todos');
   }
+
+  postTodo(todo: Todo): Observable<Todo[]> {
+    return this.httpClient.post<Todo[]>('api/todos', todo);
+  }
 }

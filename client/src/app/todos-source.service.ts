@@ -17,8 +17,6 @@ export class TodosSourceService {
       'Content-Type',
       'text/plain; charset=utf-8'
     );
-
-    console.log('sparar: ', text);
     return this.httpClient.put('api/todos/source', text, {
       headers,
       responseType: 'text',

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, Put } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post, Put } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { settings } from 'src/environments/environment';
@@ -36,6 +36,12 @@ export class TodosController {
             checked: false,
           };
     });
+  }
+
+  @Post()
+  addTodo(@Body() todo: Todo): Todo[] {
+    fs.appendFileSync(this.sourceFilePath, `\n${todo.title}`);
+    return this.getTodos();
   }
 
   @Get('source')
