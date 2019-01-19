@@ -1,5 +1,6 @@
 import { Action, State, StateContext } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
+import { Todo } from 'src/app/models/todo';
 import { TodosService } from 'src/app/todos.service';
 import { AddTodo, GetTodos, ToggleChecked } from './todos.actions';
 import { defaults, TodosStateModel } from './todos.model';
@@ -13,32 +14,30 @@ export class TodosState {
 
   @Action(GetTodos)
   getTodos(context: StateContext<TodosStateModel>) {
-    return this.todoService.getTodos().pipe(
-      tap(todos => {
-        context.patchState({
-          todoIds: todos.map(x => x.id),
-          todos: todos.reduce((prev, cur) => {
-            prev[cur.id] = cur;
-            return prev;
-          }, {}),
-        });
-      })
-    );
+    return this.todoService
+      .getTodos()
+      .pipe(tap(x => context.patchState(this.mapTodos(x))));
   }
 
   @Action(ToggleChecked)
   toggleChecked(context: StateContext<TodosStateModel>, action: ToggleChecked) {
     const state = context.getState();
 
+    const updatedTodo = {
+      ...state.todos[action.todo.id],
+      checked: !state.todos[action.todo.id].checked,
+    };
+
     context.patchState({
       todos: {
         ...state.todos,
-        [action.todo.id]: {
-          ...state.todos[action.todo.id],
-          checked: !state.todos[action.todo.id].checked,
-        },
+        [action.todo.id]: updatedTodo,
       },
     });
+
+    return this.todoService
+      .putTodo(updatedTodo)
+      .pipe(tap(x => context.patchState(this.mapTodos(x))));
   }
 
   @Action(AddTodo)
@@ -66,16 +65,16 @@ export class TodosState {
         title: action.title,
         checked: false,
       })
-      .pipe(
-        tap(todos => {
-          context.patchState({
-            todoIds: todos.map(x => x.id),
-            todos: todos.reduce((prev, cur) => {
-              prev[cur.id] = cur;
-              return prev;
-            }, {}),
-          });
-        })
-      );
+      .pipe(tap(x => context.patchState(this.mapTodos(x))));
+  }
+
+  mapTodos(todos: Todo[]) {
+    return {
+      todoIds: todos.map(x => x.id),
+      todos: todos.reduce((prev, cur) => {
+        prev[cur.id] = cur;
+        return prev;
+      }, {}),
+    };
   }
 }
