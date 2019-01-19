@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Header, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Header,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { settings } from 'src/environments/environment';
@@ -11,6 +19,20 @@ export class TodosController {
 
   constructor() {
     this.sourceFilePath = this.getAbsoluteFilePath(settings.sourceFilePath);
+    this.ensureDirectoryExistence(this.sourceFilePath);
+  }
+
+  @Get('source')
+  @Header('content-type', 'text/plain')
+  getSource() {
+    return this.readFileAsString(this.sourceFilePath);
+  }
+
+  @Put('source')
+  @Header('content-type', 'text/plain')
+  putSource(@Body() text) {
+    fs.writeFileSync(this.sourceFilePath, text, 'utf8');
+    return text;
   }
 
   @Get()
@@ -44,18 +66,23 @@ export class TodosController {
     return this.getTodos();
   }
 
-  @Get('source')
-  @Header('content-type', 'text/plain')
-  getSource() {
-    return this.readFileAsString(this.sourceFilePath);
+  @Put(':id')
+  updateTodo(@Body() todo: Todo, @Param('id') id: number): Todo[] {
+    const todos = this.getTodos();
+    todos[id - 1] = todo;
+
+    const source = this.convertToSource(todos);
+
+    this.ensureDirectoryExistence(this.sourceFilePath);
+    fs.writeFileSync(this.sourceFilePath, source, 'utf8');
+
+    return this.getTodos();
   }
 
-  @Put('source')
-  @Header('content-type', 'text/plain')
-  putSource(@Body() text) {
-    this.ensureDirectoryExistence(this.sourceFilePath);
-    fs.writeFileSync(this.sourceFilePath, text, 'utf8');
-    return text;
+  convertToSource(todos: Todo[]): string {
+    return todos
+      .map(todo => `${todo.checked ? 'x ' : ''}${todo.title}`)
+      .join('\n');
   }
 
   readFileAsString(filePath: string) {
