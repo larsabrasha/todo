@@ -3,16 +3,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { settings } from 'src/environments/environment';
 import { Todo } from 'src/models/todo';
-const parser = require('todotxt-parser');
 
 @Controller('todos')
 export class TodosController {
   sourceFilePath: string;
+  regex = /(x)?\s?(\([A-Z]\))?\s?(\d{4}\-\d{2}\-\d{2})?\s?(\d{4}\-\d{2}\-\d{2})?\s?(.*)/;
 
   constructor() {
-    console.log(settings.sourceFilePath);
     this.sourceFilePath = this.getAbsoluteFilePath(settings.sourceFilePath);
-    console.log(this.sourceFilePath);
   }
 
   @Get()
@@ -22,18 +20,22 @@ export class TodosController {
   }
 
   parseSource(source: string): Todo[] {
-    // TODO use my own parse instead. (x )?(\([A-Z]\) )?(\d{4}\-\d{2}\-\d{2} )?(\d{4}\-\d{2}\-\d{2} )?(.*)
-    const tasks = parser.relaxed(source.trim());
-    console.log(tasks);
+    const sourceRows = source.trim().split('\n');
 
-    const todos = tasks.map((x, index) => ({
-      id: index + 1,
-      title: x.text,
-      checked: x.complete,
-    }));
-    console.log(todos);
-
-    return todos;
+    return sourceRows.map((x, index) => {
+      const m = this.regex.exec(x.trim());
+      return m !== null
+        ? {
+            id: index + 1,
+            title: m[5],
+            checked: m[1] === 'x' ? true : false,
+          }
+        : {
+            id: index + 1,
+            title: '',
+            checked: false,
+          };
+    });
   }
 
   @Get('source')
