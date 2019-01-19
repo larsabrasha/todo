@@ -3,7 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
 import { Todo } from '../models/todo';
 import { IAppState } from '../store/app.state';
-import { AddTodo, GetTodos, ToggleChecked } from '../store/todos/todos.actions';
+import {
+  AddTodo,
+  DeleteCompletedTodos,
+  GetTodos,
+  ToggleChecked,
+} from '../store/todos/todos.actions';
 
 @Component({
   selector: 'app-todos',
@@ -44,6 +49,10 @@ export class TodosComponent implements OnInit {
   onSubmit() {
     this.store.dispatch(new AddTodo(this.form.value.title));
     this.title.setValue('');
+  }
+
+  deleteCompletedTodos() {
+    this.store.dispatch(new DeleteCompletedTodos());
   }
 
   onFocus() {

@@ -79,6 +79,18 @@ export class TodosController {
     return this.getTodos();
   }
 
+  @Post('delete-completed')
+  deleteCompletedTodos() {
+    const todos = this.getTodos().filter(x => !x.checked);
+
+    const source = this.convertToSource(todos);
+
+    this.ensureDirectoryExistence(this.sourceFilePath);
+    fs.writeFileSync(this.sourceFilePath, source, 'utf8');
+
+    return this.getTodos();
+  }
+
   convertToSource(todos: Todo[]): string {
     return todos
       .map(todo => `${todo.checked ? 'x ' : ''}${todo.title}`)

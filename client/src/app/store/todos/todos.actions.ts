@@ -13,3 +13,7 @@ export class AddTodo {
   static readonly type = '[Todos] Add Todo';
   constructor(public title: string) {}
 }
+
+export class DeleteCompletedTodos {
+  static readonly type = '[Todos] Delete Completed Todos';
+}

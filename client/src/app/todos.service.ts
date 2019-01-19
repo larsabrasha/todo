@@ -20,4 +20,8 @@ export class TodosService {
   putTodo(todo: Todo): Observable<Todo[]> {
     return this.httpClient.put<Todo[]>(`api/todos/${todo.id}`, todo);
   }
+
+  deleteCompletedTodos(): Observable<Todo[]> {
+    return this.httpClient.post<Todo[]>(`api/todos/delete-completed`, {});
+  }
 }
