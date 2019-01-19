@@ -34,6 +34,10 @@ export class TodosController {
   }
 
   parseSource(source: string): Todo[] {
+    if (source.trim() === '') {
+      return [];
+    }
+
     const sourceRows = source.trim().split('\n');
 
     return sourceRows.map((x, index) => {
@@ -44,12 +48,8 @@ export class TodosController {
             title: m[5],
             checked: m[1] === 'x' ? true : false,
           }
-        : {
-            index: index + 1,
-            title: '',
-            checked: false,
-          };
-    });
+        : null;
+    }).filter(x => x != null);
   }
 
   @Post()
