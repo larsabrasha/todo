@@ -17,8 +17,8 @@ export class TodosService {
     return this.httpClient.post<Todo[]>('api/todos', todo);
   }
 
-  putTodo(todo: Todo): Observable<Todo[]> {
-    return this.httpClient.put<Todo[]>(`api/todos/${todo.id}`, todo);
+  putTodo(index: number, todo: Todo): Observable<Todo[]> {
+    return this.httpClient.put<Todo[]>(`api/todos/${index}`, todo);
   }
 
   deleteCompletedTodos(): Observable<Todo[]> {

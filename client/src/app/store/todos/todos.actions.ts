@@ -17,3 +17,8 @@ export class AddTodo {
 export class DeleteCompletedTodos {
   static readonly type = '[Todos] Delete Completed Todos';
 }
+
+export class MoveTodo {
+  static readonly type = '[Todos] Move Todo';
+  constructor(public previousIndex: number, public newIndex: number) {}
+}

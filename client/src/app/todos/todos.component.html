@@ -1,5 +1,9 @@
 <div class="pt-3 list-group mx-auto" style="max-width: 500px">
-  <div *ngIf="(todos$ | async) as todos">
+  <div
+    *ngIf="(todos$ | async) as todos"
+    cdkDropList
+    (cdkDropListDropped)="drop($event)"
+  >
     <ng-container *ngFor="let todoId of (todoIds$ | async)">
       <a
         href=""
@@ -12,6 +16,8 @@
           opacity: todo.checked ? 0.25 : 1
         }"
         (click)="toggle(todo); $event.preventDefault()"
+        cdkDrag
+        [cdkDragData]="todo"
       >
         {{ todo.title }}
       </a>

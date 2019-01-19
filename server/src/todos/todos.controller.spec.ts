@@ -11,7 +11,7 @@ describe('Todos Controller', () => {
   });
   it('should be defined', () => {
     const controller: TodosController = module.get<TodosController>(
-      TodosController
+      TodosController,
     );
     expect(controller).toBeDefined();
   });

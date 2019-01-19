@@ -1,14 +1,10 @@
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
 import { Todo } from '../models/todo';
 import { IAppState } from '../store/app.state';
-import {
-  AddTodo,
-  DeleteCompletedTodos,
-  GetTodos,
-  ToggleChecked,
-} from '../store/todos/todos.actions';
+import { AddTodo, DeleteCompletedTodos, GetTodos, MoveTodo, ToggleChecked } from '../store/todos/todos.actions';
 
 @Component({
   selector: 'app-todos',
@@ -53,6 +49,10 @@ export class TodosComponent implements OnInit {
 
   deleteCompletedTodos() {
     this.store.dispatch(new DeleteCompletedTodos());
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    this.store.dispatch(new MoveTodo(event.previousIndex, event.currentIndex));
   }
 
   onFocus() {

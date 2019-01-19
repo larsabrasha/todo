@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Header,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Get, Header, Param, Post, Put } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { settings } from 'src/environments/environment';
@@ -48,12 +40,12 @@ export class TodosController {
       const m = this.regex.exec(x.trim());
       return m !== null
         ? {
-            id: index + 1,
+            index,
             title: m[5],
             checked: m[1] === 'x' ? true : false,
           }
         : {
-            id: index + 1,
+            index: index + 1,
             title: '',
             checked: false,
           };
@@ -66,15 +58,20 @@ export class TodosController {
 
     fs.appendFileSync(
       this.sourceFilePath,
-      `${source != null ? '\n' : ''}${todo.title}`
+      `${source != null ? '\n' : ''}${todo.title}`,
     );
     return this.getTodos();
   }
 
-  @Put(':id')
-  updateTodo(@Body() todo: Todo, @Param('id') id: number): Todo[] {
+  @Put(':index')
+  updateTodo(@Body() todo: Todo, @Param('index') index: number): Todo[] {
     const todos = this.getTodos();
-    todos[id - 1] = todo;
+
+    if (index !== todo.index) {
+      todos[index] = todos[todo.index];
+    }
+
+    todos[todo.index] = todo;
 
     const source = this.convertToSource(todos);
 
