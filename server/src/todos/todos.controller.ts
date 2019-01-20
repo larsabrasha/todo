@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Header, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Header,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Todo } from '../models/todo';
@@ -69,7 +77,7 @@ export class TodosController {
     const todos = this.getTodos();
 
     if (index !== todo.index) {
-      todos[index] = todos[todo.index];
+      todos.splice(todo.index, 0, todos.splice(index, 1)[0]);
     }
 
     todos[todo.index] = todo;
