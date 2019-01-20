@@ -19,8 +19,8 @@
         cdkDrag
         [cdkDragData]="todo"
       >
+      <div class="float-right" cdkDragHandle style="cursor: move; opacity: 0.1"><i class="fa fa-arrows-alt"></i></div>
         {{ todo.title }}
-        <div class="float-right" cdkDragHandle style="cursor: move; opacity: 0.1"><i class="fa fa-arrows-alt"></i></div>
       </div>
     </ng-container>
   </div>
