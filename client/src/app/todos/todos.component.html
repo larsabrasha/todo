@@ -4,25 +4,29 @@
     cdkDropList
     (cdkDropListDropped)="drop($event)"
   >
-    <ng-container *ngFor="let todoId of (todoIds$ | async)">
+    <div
+      *ngFor="let todo of todos; index as i"
+      class="list-group-item list-group-item-action"
+      [class.bg-checked]="todo.checked"
+      [class.bg-unchecked]="todo.checked == false"
+      [ngStyle]="{
+        'text-decoration': todo.checked ? 'line-through' : 'none',
+        opacity: todo.checked ? 0.25 : 1
+      }"
+      style="user-select: none; cursor: pointer;"
+      (click)="toggle(i)"
+      cdkDrag
+      [cdkDragData]="todo"
+    >
       <div
-        *ngIf="todos[todoId] as todo"
-        class="list-group-item list-group-item-action"
-        [class.bg-checked]="todo.checked"
-        [class.bg-unchecked]="todo.checked == false"
-        [ngStyle]="{
-          'text-decoration': todo.checked ? 'line-through' : 'none',
-          opacity: todo.checked ? 0.25 : 1
-        }"
-        style="user-select: none; cursor: pointer;"
-        (click)="toggle(todo)"
-        cdkDrag
-        [cdkDragData]="todo"
+        class="float-right ml-1"
+        cdkDragHandle
+        style="cursor: move; opacity: 0.1"
       >
-      <div class="float-right ml-1" cdkDragHandle style="cursor: move; opacity: 0.1"><i class="fa fa-arrows-alt"></i></div>
-        {{ todo.title }}
+        <i class="fa fa-arrows-alt"></i>
       </div>
-    </ng-container>
+      {{ todo.title }}
+    </div>
   </div>
 
   <div class="mt-3">

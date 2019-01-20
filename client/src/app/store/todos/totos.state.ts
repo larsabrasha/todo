@@ -1,6 +1,5 @@
 import { Action, State, StateContext } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
-import { Todo } from 'src/app/models/todo';
 import { TodosService } from 'src/app/todos.service';
 import { AddTodo, DeleteCompletedTodos, GetTodos, MoveTodo, ToggleChecked } from './todos.actions';
 import { defaults, TodosStateModel } from './todos.model';
@@ -14,9 +13,13 @@ export class TodosState {
 
   @Action(GetTodos)
   getTodos(context: StateContext<TodosStateModel>) {
-    return this.todoService
-      .getTodos()
-      .pipe(tap(x => context.patchState(this.mapTodos(x))));
+    return this.todoService.getTodos().pipe(
+      tap(x =>
+        context.patchState({
+          todos: x,
+        })
+      )
+    );
   }
 
   @Action(ToggleChecked)
@@ -24,24 +27,35 @@ export class TodosState {
     const state = context.getState();
 
     const updatedTodo = {
-      ...state.todos[action.todo.index],
-      checked: !state.todos[action.todo.index].checked,
+      ...state.todos[action.index],
+      checked: !state.todos[action.index].checked,
     };
 
     return this.todoService
-      .putTodo(action.todo.index, updatedTodo)
-      .pipe(tap(x => context.patchState(this.mapTodos(x))));
+      .putTodo(action.index, updatedTodo)
+      .pipe(
+        tap(x =>
+          context.patchState({
+            todos: x,
+          })
+        )
+      );
   }
 
   @Action(AddTodo)
   addTodo(context: StateContext<TodosStateModel>, action: AddTodo) {
     return this.todoService
       .postTodo({
-        index: null,
         title: action.title,
         checked: false,
       })
-      .pipe(tap(x => context.patchState(this.mapTodos(x))));
+      .pipe(
+        tap(x =>
+          context.patchState({
+            todos: x,
+          })
+        )
+      );
   }
 
   @Action(MoveTodo)
@@ -55,23 +69,25 @@ export class TodosState {
 
     return this.todoService
       .putTodo(action.previousIndex, todo)
-      .pipe(tap(x => context.patchState(this.mapTodos(x))));
-  }
-
-  mapTodos(todos: Todo[]) {
-    return {
-      todoIds: todos.map(x => x.index),
-      todos: todos.reduce((prev, cur) => {
-        prev[cur.index] = cur;
-        return prev;
-      }, {}),
-    };
+      .pipe(
+        tap(x =>
+          context.patchState({
+            todos: x,
+          })
+        )
+      );
   }
 
   @Action(DeleteCompletedTodos)
   deleteCompletedTodos(context: StateContext<TodosStateModel>) {
     return this.todoService
       .deleteCompletedTodos()
-      .pipe(tap(x => context.patchState(this.mapTodos(x))));
+      .pipe(
+        tap(x =>
+          context.patchState({
+            todos: x,
+          })
+        )
+      );
   }
 }

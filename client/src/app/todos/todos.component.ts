@@ -13,11 +13,8 @@ import { AddTodo, DeleteCompletedTodos, GetTodos, MoveTodo, ToggleChecked } from
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodosComponent implements OnInit {
-  @Select((state: IAppState) => state.todos.todoIds)
-  todoIds$: number[];
-
   @Select((state: IAppState) => state.todos.todos)
-  todos$: { [id: number]: Todo };
+  todos$: Todo[];
 
   form: FormGroup;
 
@@ -38,8 +35,8 @@ export class TodosComponent implements OnInit {
     });
   }
 
-  toggle(todo: Todo) {
-    this.store.dispatch(new ToggleChecked(todo));
+  toggle(index: number) {
+    this.store.dispatch(new ToggleChecked(index));
   }
 
   onSubmit() {
