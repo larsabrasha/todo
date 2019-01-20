@@ -43,8 +43,12 @@ export class TodosComponent implements OnInit {
   }
 
   onSubmit() {
-    this.store.dispatch(new AddTodo(this.form.value.title));
-    this.title.setValue('');
+    const title = this.form.value.title.trim();
+
+    if (title !== '') {
+      this.store.dispatch(new AddTodo(this.form.value.title));
+      this.title.setValue('');
+    }
   }
 
   deleteCompletedTodos() {
