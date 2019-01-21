@@ -31,63 +31,55 @@ export class TodosState {
       checked: !state.todos[action.index].checked,
     };
 
-    return this.todoService
-      .putTodo(action.index, updatedTodo)
-      .pipe(
-        tap(x =>
-          context.patchState({
-            todos: x,
-          })
-        )
-      );
+    const todos = [...state.todos];
+    todos[action.index] = updatedTodo;
+
+    context.patchState({
+      todos: todos,
+    });
+
+    return this.todoService.putTodo(action.index, updatedTodo);
   }
 
   @Action(AddTodo)
   addTodo(context: StateContext<TodosStateModel>, action: AddTodo) {
-    return this.todoService
-      .postTodo({
-        title: action.title,
-        checked: false,
-      })
-      .pipe(
-        tap(x =>
-          context.patchState({
-            todos: x,
-          })
-        )
-      );
+    const state = context.getState();
+
+    const newTodo = {
+      title: action.title,
+      checked: false,
+    };
+
+    const todos = [...state.todos, newTodo];
+    context.patchState({
+      todos: todos,
+    });
+
+    return this.todoService.postTodo(newTodo);
   }
 
   @Action(MoveTodo)
   moveTodo(context: StateContext<TodosStateModel>, action: MoveTodo) {
     const state = context.getState();
 
-    const todo = {
-      ...state.todos[action.previousIndex],
-      index: action.newIndex,
-    };
+    const todos = [...state.todos];
+    todos.splice(action.newIndex, 0, todos.splice(action.previousIndex, 1)[0]);
 
-    return this.todoService
-      .putTodo(action.previousIndex, todo)
-      .pipe(
-        tap(x =>
-          context.patchState({
-            todos: x,
-          })
-        )
-      );
+    context.patchState({
+      todos: todos,
+    });
+
+    return this.todoService.moveTodo(action.previousIndex, action.newIndex);
   }
 
   @Action(DeleteCompletedTodos)
   deleteCompletedTodos(context: StateContext<TodosStateModel>) {
-    return this.todoService
-      .deleteCompletedTodos()
-      .pipe(
-        tap(x =>
-          context.patchState({
-            todos: x,
-          })
-        )
-      );
+    return this.todoService.deleteCompletedTodos().pipe(
+      tap(x =>
+        context.patchState({
+          todos: x,
+        })
+      )
+    );
   }
 }

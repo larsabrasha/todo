@@ -21,6 +21,10 @@ export class TodosService {
     return this.httpClient.put<Todo[]>(`api/todos/${index}`, todo);
   }
 
+  moveTodo(fromIndex: number, toIndex: number): Observable<Todo[]> {
+    return this.httpClient.post<Todo[]>(`api/todos/move-todo?fromIndex=${fromIndex}&toIndex=${toIndex}`, '');
+  }
+
   deleteCompletedTodos(): Observable<Todo[]> {
     return this.httpClient.post<Todo[]>(`api/todos/delete-completed`, {});
   }

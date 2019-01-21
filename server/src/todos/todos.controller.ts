@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Header,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Get, Header, Param, Post, Put, Query } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Todo } from '../models/todo';
@@ -75,12 +67,21 @@ export class TodosController {
   @Put(':index')
   updateTodo(@Body() todo: Todo, @Param('index') index: number): Todo[] {
     const todos = this.getTodos();
+    todos[index] = todo;
 
-    if (index !== todo.index) {
-      todos.splice(todo.index, 0, todos.splice(index, 1)[0]);
-    }
+    const source = this.convertToSource(todos);
 
-    todos[todo.index] = todo;
+    this.ensureDirectoryExistence(this.sourceFilePath);
+    fs.writeFileSync(this.sourceFilePath, source, 'utf8');
+
+    return this.getTodos();
+  }
+
+  @Post('move-todo')
+  moveTodo(@Query() query): Todo[] {
+    const todos = this.getTodos();
+
+    todos.splice(query.toIndex, 0, todos.splice(query.fromIndex, 1)[0]);
 
     const source = this.convertToSource(todos);
 
