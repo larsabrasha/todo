@@ -4,10 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subscription } from 'rxjs';
 import { IAppState } from 'src/app/store/app.state';
-import {
-  GetTodosSource,
-  PutTodosSource,
-} from 'src/app/store/todos-source/todos-source.actions';
+import { GetTodosSource, PutTodosSource } from 'src/app/store/todos-source/todos-source.actions';
 
 @Component({
   selector: 'app-source-editor',
@@ -40,7 +37,7 @@ export class SourceEditorComponent implements OnInit {
       .subscribe(x => this.source.setValue(x));
   }
 
-  save() {
+  saveAndClose() {
     this.store.dispatch(new PutTodosSource(this.source.value));
 
     this.router.navigate(['/todos']);
