@@ -1,7 +1,7 @@
 <!-- As a link -->
 <nav class="navbar navbar-light">
   <div class="container">
-    <a class="navbar-brand" [routerLink]="[isAuthenticated ? '/todos' : '/']"
+      <a class="navbar-brand" [routerLink]="[isAuthenticated ? '/todos' : '/']"
       >Todo</a
     >
 
@@ -16,7 +16,7 @@
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <img ngxGravatar [email]="'lars.arvidsson@gmail.com'" />
+            <img ngxGravatar [email]="email" *ngIf="email != null"/>
           </a>
           <div
             class="dropdown-menu dropdown-menu-right"
@@ -35,7 +35,7 @@
   </div>
 </nav>
 
-<div *ngIf="!isAuthenticated" class="text-center" style="margin-top:100px">
+<div *ngIf="isAuthenticated === false" class="text-center" style="margin-top:100px">
   <button class="btn btn-primary btn-lg px-4" (click)="login()">
     Login
   </button>

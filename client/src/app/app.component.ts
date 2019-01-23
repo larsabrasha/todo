@@ -11,12 +11,14 @@ import { Subscription } from 'rxjs';
 export class AppComponent implements OnInit, OnDestroy {
   isAuthenticated: boolean;
   authenticationStateSub: Subscription;
+  email: string;
 
   constructor(public oktaAuth: OktaAuthService, private router: Router) {
     // Subscribe to authentication state changes
     this.authenticationStateSub = this.oktaAuth.$authenticationState.subscribe(
-      (isAuthenticated: boolean) => {
+      async (isAuthenticated: boolean) => {
         this.isAuthenticated = isAuthenticated;
+        this.email = (await this.oktaAuth.getUser()).email;
       }
     );
   }
@@ -26,6 +28,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.isAuthenticated = await this.oktaAuth.isAuthenticated();
 
     if (this.isAuthenticated) {
+      this.email = (await this.oktaAuth.getUser()).email;
       this.router.navigate(['/todos']);
     }
   }

@@ -1,4 +1,4 @@
-import { Action, State, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 import { TodosService } from 'src/app/todos.service';
 import { AddTodo, DeleteCompletedTodos, GetTodos, MoveTodo, ToggleChecked } from './todos.actions';
@@ -10,6 +10,11 @@ import { defaults, TodosStateModel } from './todos.model';
 })
 export class TodosState {
   constructor(private todoService: TodosService) {}
+
+  @Selector()
+  static anyCheckedTodos(todosState: TodosStateModel): boolean {
+    return todosState.todos.filter(x => x.checked).length > 0;
+  }
 
   @Action(GetTodos)
   getTodos(context: StateContext<TodosStateModel>) {

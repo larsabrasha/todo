@@ -2,9 +2,11 @@ import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
 import { Todo } from '../models/todo';
 import { IAppState } from '../store/app.state';
 import { AddTodo, DeleteCompletedTodos, GetTodos, MoveTodo, ToggleChecked } from '../store/todos/todos.actions';
+import { TodosState } from '../store/todos/totos.state';
 
 @Component({
   selector: 'app-todos',
@@ -14,7 +16,10 @@ import { AddTodo, DeleteCompletedTodos, GetTodos, MoveTodo, ToggleChecked } from
 })
 export class TodosComponent implements OnInit {
   @Select((state: IAppState) => state.todos.todos)
-  todos$: Todo[];
+  todos$: Observable<Todo[]>;
+
+  @Select(TodosState.anyCheckedTodos)
+  anyCheckedTodos$: Observable<boolean>;
 
   form: FormGroup;
 
