@@ -1,4 +1,4 @@
-import { Todo } from 'dist/models/todo';
+import { Todo } from '../../models/todo';
 
 export class TodoWasUpdatedPayload {
   todo: Todo;

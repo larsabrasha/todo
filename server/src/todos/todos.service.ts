@@ -2,13 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as eventStream from 'event-stream';
 import * as fs from 'fs';
 import * as path from 'path';
-import { SourceWasUpdatedPayload } from 'src/models/payloads/source-was-updated-payload';
-import { TodoWasAddedPayload } from 'src/models/payloads/todo-was-added-payload';
-import { TodoWasMovedPayload } from 'src/models/payloads/todo-was-moved-payload';
-import { TodoWasUpdatedPayload } from 'src/models/payloads/todo-was-updated-payload';
-import { TodoEvent } from 'src/models/todo-event';
-import { TodoEventType } from 'src/models/toto-event-type';
+import { SourceWasUpdatedPayload } from '../models/payloads/source-was-updated-payload';
+import { TodoWasAddedPayload } from '../models/payloads/todo-was-added-payload';
+import { TodoWasMovedPayload } from '../models/payloads/todo-was-moved-payload';
+import { TodoWasUpdatedPayload } from '../models/payloads/todo-was-updated-payload';
 import { Todo } from '../models/todo';
+import { TodoEvent } from '../models/todo-event';
+import { TodoEventType } from '../models/toto-event-type';
 
 @Injectable()
 export class TodosService {
@@ -93,7 +93,37 @@ export class TodosService {
     return todos.filter(x => !x.checked);
   }
 
-  getTodos2(): Promise<Todo[]> {
+  getTodoEvents(): Promise<TodoEvent[]> {
+    return new Promise((resolve, reject) => {
+      const todoEvents = [];
+
+      const stream = fs
+        .createReadStream(this.eventSourceFilePath)
+        .pipe(eventStream.split())
+        .pipe(
+          eventStream
+            .mapSync(line => {
+              stream.pause();
+
+              const todoEventAsString = line.trim();
+              if (todoEventAsString !== '') {
+                const todoEvent = JSON.parse(todoEventAsString);
+                todoEvents.push(todoEvent);
+              }
+
+              stream.resume();
+            })
+            .on('error', err => {
+              reject(err);
+            })
+            .on('end', () => {
+              resolve(todoEvents);
+            })
+        );
+    });
+  }
+
+  getTodosFromEvents(): Promise<Todo[]> {
     return new Promise((resolve, reject) => {
       let lineNr = 0;
 

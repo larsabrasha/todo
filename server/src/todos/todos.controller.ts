@@ -8,8 +8,8 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { TodoEventType } from 'src/models/toto-event-type';
 import { Todo } from '../models/todo';
+import { TodoEventType } from '../models/toto-event-type';
 import { TodosService } from './todos.service';
 
 @Controller('todos')
@@ -73,5 +73,10 @@ export class TodosController {
       type: TodoEventType.CompletedTodosWasDeleted,
       payload: {},
     });
+  }
+
+  @Get('todo-events')
+  getTodoEvents() {
+    return this.todosService.getTodoEvents();
   }
 }
