@@ -1,2 +1,4 @@
 node_modules
 dist
+data/todo.txt
+data/todo-events.txt

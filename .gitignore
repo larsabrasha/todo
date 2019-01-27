@@ -1,4 +1,3 @@
 .caddy
 .env
-server/data/todo.txt
 todo.txt
