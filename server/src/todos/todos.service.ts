@@ -95,6 +95,11 @@ export class TodosService {
 
   getTodoEvents(): Promise<TodoEvent[]> {
     return new Promise((resolve, reject) => {
+      if (fs.existsSync(this.eventSourceFilePath) === false) {
+        resolve([]);
+        return;
+      }
+
       const todoEvents = [];
 
       const stream = fs
@@ -164,7 +169,9 @@ export class TodosService {
   }
 
   getTodosAsString(): string {
-    return this.readFileAsString(this.sourceFilePath);
+    return fs.existsSync(this.eventSourceFilePath)
+      ? this.readFileAsString(this.sourceFilePath)
+      : null;
   }
 
   saveTodos(todos: Todo[]) {

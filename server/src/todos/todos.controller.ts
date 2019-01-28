@@ -19,7 +19,8 @@ export class TodosController {
   @Get('source')
   @Header('content-type', 'text/plain')
   getSource() {
-    return this.todosService.getTodosAsString();
+    const source = this.todosService.getTodosAsString();
+    return source != null ? source : '';
   }
 
   @Put('source')
