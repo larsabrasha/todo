@@ -1,6 +1,7 @@
 <div class="pt-3 list-group mx-auto" style="max-width: 500px">
   <div
     *ngIf="(todos$ | async) as todos"
+    class="mb-3"
     cdkDropList
     (cdkDropListDropped)="drop($event)"
   >
@@ -29,7 +30,7 @@
     </div>
   </div>
 
-  <div class="mt-3">
+  <div class="mb-3">
     <form [formGroup]="form" (ngSubmit)="onSubmit()" action="#">
       <input
         type="text"
@@ -43,21 +44,35 @@
     </form>
   </div>
 
-  <div class="mt-3">
-    <div class="float-right">
-      <a [routerLink]="['/todos/source-editor']" class="text-muted" title="Edit source"
-        ><small><i class="fas fa-code"></i></small
-      ></a>
-    </div>
-
-    <div class="text-center">
-      <button
-        class="btn btn-sm btn-light text-muted"
-        (click)="deleteCompletedTodos()"
-        *ngIf="(anyCheckedTodos$ | async)"
-      >
-        <small>Clear completed</small>
-      </button>
+  <div class="mb-3">
+    <div class="row no-gutters">
+      <div class="d-none d-sm-block col mb-1"></div>
+      <div class="col-12 col-sm mb-1 text-center">
+        <button
+          class="btn btn-sm btn-light text-muted"
+          (click)="deleteCompletedTodos()"
+          *ngIf="(anyCheckedTodos$ | async)"
+        >
+          <small>Clear completed</small>
+        </button>
+      </div>
+      <div class="col-12 col-sm mb-1 text-right">
+        <a
+          href=""
+          class="mr-1 btn btn-sm btn-light text-muted"
+          [class.active]="showingHistory$ | async"
+          (click)="toggleHistory(); $event.preventDefault()"
+          ><small><i class="fas fa-history"></i></small
+        ></a>
+        <a
+          [routerLink]="['/todos/source-editor']"
+          class="btn btn-sm btn-light text-muted"
+          title="Edit source"
+          ><small><i class="fas fa-code"></i></small
+        ></a>
+      </div>
     </div>
   </div>
+
+  <app-history *ngIf="(showingHistory$ | async)"></app-history>
 </div>

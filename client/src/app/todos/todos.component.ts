@@ -5,8 +5,15 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { Todo } from '../models/todo';
 import { IAppState } from '../store/app.state';
-import { AddTodo, DeleteCompletedTodos, GetTodos, MoveTodo, ToggleChecked } from '../store/todos/todos.actions';
-import { TodosState } from '../store/todos/totos.state';
+import { ToggleHistory } from '../store/layout/layout.actions';
+import {
+  AddTodo,
+  DeleteCompletedTodos,
+  GetTodos,
+  MoveTodo,
+  ToggleChecked,
+} from '../store/todos/todos.actions';
+import { TodosState } from '../store/todos/todos.state';
 
 @Component({
   selector: 'app-todos',
@@ -20,6 +27,9 @@ export class TodosComponent implements OnInit {
 
   @Select(TodosState.anyCheckedTodos)
   anyCheckedTodos$: Observable<boolean>;
+
+  @Select((state: IAppState) => state.layout.showingHistory)
+  showingHistory$: Observable<boolean>;
 
   form: FormGroup;
 
@@ -51,6 +61,10 @@ export class TodosComponent implements OnInit {
       this.store.dispatch(new AddTodo(this.form.value.title));
       this.title.setValue('');
     }
+  }
+
+  toggleHistory() {
+    this.store.dispatch(new ToggleHistory());
   }
 
   deleteCompletedTodos() {

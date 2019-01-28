@@ -1,6 +1,8 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { registerLocaleData } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import localeSv from '@angular/common/locales/sv';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -14,8 +16,11 @@ import { AppComponent } from './app.component';
 import { AuthInterceptor } from './auth-interceptor';
 import { ProfileComponent } from './profile/profile.component';
 import { appState } from './store/app.state';
+import { HistoryComponent } from './todos/history/history.component';
 import { SourceEditorComponent } from './todos/source-editor/source-editor.component';
 import { TodosComponent } from './todos/todos.component';
+
+registerLocaleData(localeSv, 'sv');
 
 @NgModule({
   declarations: [
@@ -23,6 +28,7 @@ import { TodosComponent } from './todos/todos.component';
     ProfileComponent,
     TodosComponent,
     SourceEditorComponent,
+    HistoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,6 +48,7 @@ import { TodosComponent } from './todos/todos.component';
     GravatarModule,
   ],
   providers: [
+    { provide: LOCALE_ID, useValue: 'sv' },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],

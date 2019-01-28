@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Todo } from './models/todo';
+import { TodoEvent } from './models/todo-event';
 
 @Injectable({
   providedIn: 'root',
@@ -22,10 +23,17 @@ export class TodosService {
   }
 
   moveTodo(fromIndex: number, toIndex: number): Observable<Todo[]> {
-    return this.httpClient.post<Todo[]>(`api/todos/move-todo?fromIndex=${fromIndex}&toIndex=${toIndex}`, '');
+    return this.httpClient.post<Todo[]>(
+      `api/todos/move-todo?fromIndex=${fromIndex}&toIndex=${toIndex}`,
+      ''
+    );
   }
 
   deleteCompletedTodos(): Observable<Todo[]> {
     return this.httpClient.post<Todo[]>(`api/todos/delete-completed`, {});
+  }
+
+  getTodoEvents(): Observable<TodoEvent[]> {
+    return this.httpClient.get<TodoEvent[]>(`api/todos/todo-events`, {});
   }
 }
