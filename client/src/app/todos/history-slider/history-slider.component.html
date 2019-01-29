@@ -1,0 +1,22 @@
+<div *ngIf="(todoEvents$ | async) as todoEvents">
+  <div class="text-muted">
+    <small>
+      {{
+        (todoEvents$ | async)[showingTodosAtHistoryIndex$ | async]?.timestamp
+          | date: 'medium'
+      }}
+    </small>
+  </div>
+
+  <form [formGroup]="form">
+    <input
+      type="range"
+      class="custom-range"
+      id="customRange1"
+      formControlName="slider"
+      (input)="_updateHistoryIndex($event)"
+      min="0"
+      [max]="maxHistoryIndex$ | async"
+    />
+  </form>
+</div>

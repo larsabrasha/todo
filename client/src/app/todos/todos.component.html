@@ -1,9 +1,32 @@
 <div class="pt-3 list-group mx-auto" style="max-width: 500px">
+  <div class="mb-1">
+    <div class="d-flex">
+      <div class="ml-auto">
+        <a
+          href=""
+          class="mr-1 btn btn-sm btn-light text-muted"
+          [class.active]="showingHistory"
+          (click)="toggleHistory(); $event.preventDefault()"
+          ><small><i class="fas fa-history"></i></small
+        ></a>
+        <a
+          [routerLink]="['/todos/source-editor']"
+          class="btn btn-sm btn-light text-muted"
+          title="Edit source"
+          ><small><i class="fas fa-code"></i></small
+        ></a>
+      </div>
+    </div>
+  </div>
+
+  <app-history-slider *ngIf="showingHistory"></app-history-slider>
+
   <div
     *ngIf="(todos$ | async) as todos"
     class="mb-3"
     cdkDropList
     (cdkDropListDropped)="drop($event)"
+    [cdkDropListDisabled]="showingHistory"
   >
     <div
       *ngFor="let todo of todos; index as i"
@@ -40,39 +63,18 @@
         style="opacity: 0.5"
         (focus)="onFocus()"
         (blur)="onBlur()"
+        *ngIf="!showingHistory"
       />
     </form>
   </div>
 
-  <div class="mb-3">
-    <div class="row no-gutters">
-      <div class="d-none d-sm-block col mb-1"></div>
-      <div class="col-12 col-sm mb-1 text-center">
-        <button
-          class="btn btn-sm btn-light text-muted"
-          (click)="deleteCompletedTodos()"
-          *ngIf="(anyCheckedTodos$ | async)"
-        >
-          <small>Clear completed</small>
-        </button>
-      </div>
-      <div class="col-12 col-sm mb-1 text-right">
-        <a
-          href=""
-          class="mr-1 btn btn-sm btn-light text-muted"
-          [class.active]="showingHistory$ | async"
-          (click)="toggleHistory(); $event.preventDefault()"
-          ><small><i class="fas fa-history"></i></small
-        ></a>
-        <a
-          [routerLink]="['/todos/source-editor']"
-          class="btn btn-sm btn-light text-muted"
-          title="Edit source"
-          ><small><i class="fas fa-code"></i></small
-        ></a>
-      </div>
-    </div>
+  <div class="mb-1 text-center">
+    <button
+      class="btn btn-sm btn-light text-muted"
+      (click)="deleteCompletedTodos()"
+      *ngIf="!showingHistory && (anyCheckedTodos$ | async)"
+    >
+      <small>Clear completed</small>
+    </button>
   </div>
-
-  <app-history *ngIf="(showingHistory$ | async)"></app-history>
 </div>

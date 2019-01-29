@@ -8,7 +8,10 @@
     ></textarea>
   </form>
 
-  <div class="mt-3 text-center">
-    <button class="btn btn-dark" (click)="saveAndClose()">Save</button>
+  <div class="mt-3">
+    <button class="btn btn-dark mr-3" (click)="saveAndClose()">
+      Save and close
+    </button>
+    <a [routerLink]="['/todos']" class="text-muted">Cancel</a>
   </div>
 </div>

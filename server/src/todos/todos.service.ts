@@ -129,8 +129,12 @@ export class TodosService {
   }
 
   getTodosFromEvents(): Promise<Todo[]> {
+    return this.getTodosFromEventsUntilIndex(null);
+  }
+
+  getTodosFromEventsUntilIndex(index: number = null): Promise<Todo[]> {
     return new Promise((resolve, reject) => {
-      let lineNr = 0;
+      let lineIndex = 0;
 
       let todos = [];
 
@@ -140,15 +144,19 @@ export class TodosService {
         .pipe(
           eventStream
             .mapSync(line => {
-              stream.pause();
+              if (index != null && lineIndex > index) {
+                stream.end();
+              }
 
-              lineNr += 1;
+              stream.pause();
 
               const todoEventAsString = line.trim();
               if (todoEventAsString !== '') {
                 const todoEvent = JSON.parse(todoEventAsString);
                 todos = this.applyTodoEvent(todoEvent, todos);
               }
+
+              lineIndex += 1;
 
               stream.resume();
             })

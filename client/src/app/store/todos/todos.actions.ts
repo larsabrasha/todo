@@ -1,6 +1,5 @@
-
-export class GetTodos {
-  static readonly type = '[Todos] Get Todos';
+export class LoadTodos {
+  static readonly type = '[Todos] Load Todos';
 }
 
 export class ToggleChecked {
@@ -20,4 +19,9 @@ export class DeleteCompletedTodos {
 export class MoveTodo {
   static readonly type = '[Todos] Move Todo';
   constructor(public previousIndex: number, public newIndex: number) {}
+}
+
+export class ShowTodosAtHistoryIndex {
+  static readonly type = '[Todos] Show Todos At History Index';
+  constructor(public historyIndex: number) {}
 }

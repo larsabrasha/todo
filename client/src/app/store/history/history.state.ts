@@ -7,7 +7,8 @@ import { TodoWasUpdatedPayload } from 'src/app/models/payloads/todo-was-updated-
 import { TodoEventSummary } from 'src/app/models/todo-event-summary';
 import { TodoEventType } from 'src/app/models/todo-event-type';
 import { TodosService } from 'src/app/todos.service';
-import { GetTodoEvents } from './history.actions';
+import { ShowTodosAtHistoryIndex } from '../todos/todos.actions';
+import { LoadTodoEvents } from './history.actions';
 import { defaults, HistoryStateModel } from './history.model';
 
 @State<HistoryStateModel>({
@@ -53,13 +54,17 @@ export class HistoryState {
     });
   }
 
-  @Action(GetTodoEvents)
-  getTodoEvents(context: StateContext<HistoryStateModel>) {
+  @Action(LoadTodoEvents)
+  loadTodoEvents(context: StateContext<HistoryStateModel>) {
     return this.todosService.getTodoEvents().pipe(
       tap(x => {
+        const maxHistoryIndex = x.length > 0 ? x.length - 1 : 0;
         context.patchState({
           todoEvents: x,
+          maxHistoryIndex: maxHistoryIndex,
         });
+
+        context.dispatch(new ShowTodosAtHistoryIndex(maxHistoryIndex));
       })
     );
   }

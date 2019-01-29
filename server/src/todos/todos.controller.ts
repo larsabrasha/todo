@@ -36,8 +36,14 @@ export class TodosController {
   }
 
   @Get()
-  getTodos() {
-    return this.todosService.getTodos();
+  getTodos(@Query() query): Promise<Todo[]> | Todo[] {
+    if (query.untilHistoryIndex != null) {
+      return this.todosService.getTodosFromEventsUntilIndex(
+        query.untilHistoryIndex
+      );
+    } else {
+      return this.todosService.getTodos();
+    }
   }
 
   @Post()

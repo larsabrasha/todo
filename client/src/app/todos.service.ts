@@ -10,8 +10,13 @@ import { TodoEvent } from './models/todo-event';
 export class TodosService {
   constructor(private httpClient: HttpClient) {}
 
-  getTodos(): Observable<Todo[]> {
-    return this.httpClient.get<Todo[]>('api/todos');
+  getTodos(untilHistoryIndex: number = null): Observable<Todo[]> {
+    return this.httpClient.get<Todo[]>(
+      'api/todos' +
+        (untilHistoryIndex != null
+          ? '?untilHistoryIndex=' + untilHistoryIndex
+          : '')
+    );
   }
 
   postTodo(todo: Todo): Observable<Todo[]> {

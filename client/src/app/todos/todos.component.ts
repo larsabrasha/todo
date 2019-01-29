@@ -1,15 +1,21 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Todo } from '../models/todo';
+import { TodoEvent } from '../models/todo-event';
 import { IAppState } from '../store/app.state';
 import { ToggleHistory } from '../store/layout/layout.actions';
 import {
   AddTodo,
   DeleteCompletedTodos,
-  GetTodos,
+  LoadTodos,
   MoveTodo,
   ToggleChecked,
 } from '../store/todos/todos.actions';
@@ -21,15 +27,18 @@ import { TodosState } from '../store/todos/todos.state';
   styleUrls: ['./todos.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TodosComponent implements OnInit {
+export class TodosComponent implements OnInit, OnDestroy {
   @Select((state: IAppState) => state.todos.todos)
   todos$: Observable<Todo[]>;
 
   @Select(TodosState.anyCheckedTodos)
   anyCheckedTodos$: Observable<boolean>;
 
-  @Select((state: IAppState) => state.layout.showingHistory)
-  showingHistory$: Observable<boolean>;
+  @Select((state: IAppState) => state.todos.showingTodosAtHistoryIndex)
+  showingTodosAtHistoryIndex$: Observable<TodoEvent[]>;
+
+  showingHistory: boolean;
+  showingHistorySub: Subscription;
 
   form: FormGroup;
 
@@ -43,23 +52,35 @@ export class TodosComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.store.dispatch(new GetTodos());
+    this.store.dispatch(new LoadTodos());
 
     this.form = this.fb.group({
       title: this.fb.control('', [Validators.required, Validators.max(500)]),
     });
+
+    this.showingHistorySub = this.store
+      .select((state: IAppState) => state.layout.showingHistory)
+      .subscribe(x => (this.showingHistory = x));
+  }
+
+  ngOnDestroy() {
+    this.showingHistorySub.unsubscribe();
   }
 
   toggle(index: number) {
-    this.store.dispatch(new ToggleChecked(index));
+    if (!this.showingHistory) {
+      this.store.dispatch(new ToggleChecked(index));
+    }
   }
 
   onSubmit() {
-    const title = this.form.value.title.trim();
+    if (!this.showingHistory) {
+      const title = this.form.value.title.trim();
 
-    if (title !== '') {
-      this.store.dispatch(new AddTodo(this.form.value.title));
-      this.title.setValue('');
+      if (title !== '') {
+        this.store.dispatch(new AddTodo(this.form.value.title));
+        this.title.setValue('');
+      }
     }
   }
 
@@ -68,7 +89,9 @@ export class TodosComponent implements OnInit {
   }
 
   deleteCompletedTodos() {
-    this.store.dispatch(new DeleteCompletedTodos());
+    if (!this.showingHistory) {
+      this.store.dispatch(new DeleteCompletedTodos());
+    }
   }
 
   drop(event: CdkDragDrop<string[]>) {

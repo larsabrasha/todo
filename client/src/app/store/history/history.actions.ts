@@ -1,3 +1,3 @@
-export class GetTodoEvents {
-  static readonly type = '[History] Get Todo Events';
+export class LoadTodoEvents {
+  static readonly type = '[History] Load Todo Events';
 }

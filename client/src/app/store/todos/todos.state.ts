@@ -1,7 +1,14 @@
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 import { TodosService } from 'src/app/todos.service';
-import { AddTodo, DeleteCompletedTodos, GetTodos, MoveTodo, ToggleChecked } from './todos.actions';
+import {
+  AddTodo,
+  DeleteCompletedTodos,
+  LoadTodos,
+  MoveTodo,
+  ShowTodosAtHistoryIndex,
+  ToggleChecked,
+} from './todos.actions';
 import { defaults, TodosStateModel } from './todos.model';
 
 @State<TodosStateModel>({
@@ -16,9 +23,11 @@ export class TodosState {
     return todosState.todos.filter(x => x.checked).length > 0;
   }
 
-  @Action(GetTodos)
-  getTodos(context: StateContext<TodosStateModel>) {
-    return this.todoService.getTodos().pipe(
+  @Action(LoadTodos)
+  loadTodos(context: StateContext<TodosStateModel>) {
+    const state = context.getState();
+
+    return this.todoService.getTodos(state.showingTodosAtHistoryIndex).pipe(
       tap(x =>
         context.patchState({
           todos: x,
@@ -86,5 +95,17 @@ export class TodosState {
         })
       )
     );
+  }
+
+  @Action(ShowTodosAtHistoryIndex)
+  showTodosAtHistoryIndex(
+    context: StateContext<TodosStateModel>,
+    action: ShowTodosAtHistoryIndex
+  ) {
+    context.patchState({
+      showingTodosAtHistoryIndex: action.historyIndex,
+    });
+
+    context.dispatch(new LoadTodos());
   }
 }

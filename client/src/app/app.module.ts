@@ -16,7 +16,7 @@ import { AppComponent } from './app.component';
 import { AuthInterceptor } from './auth-interceptor';
 import { ProfileComponent } from './profile/profile.component';
 import { appState } from './store/app.state';
-import { HistoryComponent } from './todos/history/history.component';
+import { HistorySliderComponent } from './todos/history-slider/history-slider.component';
 import { SourceEditorComponent } from './todos/source-editor/source-editor.component';
 import { TodosComponent } from './todos/todos.component';
 
@@ -28,7 +28,7 @@ registerLocaleData(localeSv, 'sv');
     ProfileComponent,
     TodosComponent,
     SourceEditorComponent,
-    HistoryComponent,
+    HistorySliderComponent,
   ],
   imports: [
     BrowserModule,
