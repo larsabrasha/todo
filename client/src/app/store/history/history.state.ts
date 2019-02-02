@@ -25,23 +25,23 @@ export class HistoryState {
       let summary = '';
 
       if (x.type === TodoEventType.TodoWasAdded) {
-        title = 'Added';
+        title = 'Todo was added';
         summary = `"${(x.payload as TodoWasAddedPayload).todo.title}"`;
       } else if (x.type === TodoEventType.TodoWasUpdated) {
-        title = 'Updated';
+        title = 'Todo was updated';
         const payload = x.payload as TodoWasUpdatedPayload;
         summary = `"${payload.todo.title}" ${
           payload.todo.checked ? 'checked' : 'unchecked'
         } `;
       } else if (x.type === TodoEventType.TodoWasMoved) {
-        title = 'Moved';
+        title = 'Todo was moved';
         const payload = x.payload as TodoWasMovedPayload;
         summary = `[${payload.fromIndex}] → [${payload.toIndex}]`;
       } else if (x.type === TodoEventType.CompletedTodosWasDeleted) {
-        title = 'Completed Deleted';
+        title = 'Completed todos was deleted';
         summary = '';
       } else if (x.type === TodoEventType.SourceWasUpdated) {
-        title = 'Source Updated';
+        title = 'Source was edited';
         const payload = x.payload as SourceWasUpdatedPayload;
         summary = `"${payload.text}"`;
       }
