@@ -2,9 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
-import { TodoEvent } from 'src/app/models/todo-event';
+import { TodoEventSummary } from 'src/app/models/todo-event-summary';
 import { IAppState } from 'src/app/store/app.state';
 import { LoadTodoEvents } from 'src/app/store/history/history.actions';
+import { HistoryState } from 'src/app/store/history/history.state';
 import { ShowTodosAtHistoryIndex } from 'src/app/store/todos/todos.actions';
 
 @Component({
@@ -13,15 +14,13 @@ import { ShowTodosAtHistoryIndex } from 'src/app/store/todos/todos.actions';
   styleUrls: ['./history-slider.component.scss'],
 })
 export class HistorySliderComponent implements OnInit, OnDestroy {
-  @Select((state: IAppState) => state.history.todoEvents)
-  todoEvents$: Observable<TodoEvent[]>;
+  @Select(HistoryState.getTodoEventSummaries)
+  todoEventSummaries$: Observable<TodoEventSummary>;
 
   @Select((state: IAppState) => state.history.maxHistoryIndex)
   maxHistoryIndex$: Observable<number>;
 
-  @Select((state: IAppState) => state.todos.showingTodosAtHistoryIndex)
-  showingTodosAtHistoryIndex$: Observable<number>;
-
+  showingTodosAtHistoryIndex: number;
   showingTodosAtHistoryIndexSub: Subscription;
 
   form: FormGroup;
@@ -42,6 +41,7 @@ export class HistorySliderComponent implements OnInit, OnDestroy {
     this.showingTodosAtHistoryIndexSub = this.store
       .select((state: IAppState) => state.todos.showingTodosAtHistoryIndex)
       .subscribe(x => {
+        this.showingTodosAtHistoryIndex = x;
         this.slider.setValue(x);
       });
   }

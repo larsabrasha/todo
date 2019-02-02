@@ -26,13 +26,13 @@ export class HistoryState {
 
       if (x.type === TodoEventType.TodoWasAdded) {
         title = 'Added';
-        summary = (x.payload as TodoWasAddedPayload).todo.title;
+        summary = `"${(x.payload as TodoWasAddedPayload).todo.title}"`;
       } else if (x.type === TodoEventType.TodoWasUpdated) {
         title = 'Updated';
         const payload = x.payload as TodoWasUpdatedPayload;
-        summary = `${payload.todo.checked ? '[completed]' : '[incompleted]'} ${
-          payload.todo.title
-        }`;
+        summary = `"${payload.todo.title}" ${
+          payload.todo.checked ? 'checked' : 'unchecked'
+        } `;
       } else if (x.type === TodoEventType.TodoWasMoved) {
         title = 'Moved';
         const payload = x.payload as TodoWasMovedPayload;
@@ -43,7 +43,7 @@ export class HistoryState {
       } else if (x.type === TodoEventType.SourceWasUpdated) {
         title = 'Source Updated';
         const payload = x.payload as SourceWasUpdatedPayload;
-        summary = payload.text;
+        summary = `"${payload.text}"`;
       }
 
       return {
