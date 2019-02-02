@@ -30,7 +30,7 @@
   >
     <div
       *ngFor="let todo of todos; index as i"
-      class="list-group-item list-group-item-action"
+      class="list-group-item list-group-item-action p-0"
       [class.bg-checked]="todo.checked"
       [class.bg-unchecked]="todo.checked == false"
       [ngStyle]="{
@@ -44,14 +44,16 @@
       tabindex="0"
       (keydown.enter)="toggle(i)"
     >
-      <div
-        class="float-right ml-1"
-        cdkDragHandle
-        style="cursor: move; opacity: 0.1"
-      >
-        <i class="fa fa-arrows-alt"></i>
+      <div class="d-flex">
+        <div class="px-3 py-2">{{ todo.title }}</div>
+        <div
+          class="px-3 py-2 ml-auto"
+          cdkDragHandle
+          style="cursor: move; opacity: 0.1"
+        >
+          <i class="fa fa-arrows-alt"></i>
+        </div>
       </div>
-      {{ todo.title }}
     </div>
   </div>
 
@@ -59,7 +61,7 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" action="#">
       <input
         type="text"
-        class="form-control gentle"
+        class="px-3 py-2 form-control gentle"
         [placeholder]="placeholder"
         formControlName="title"
         style="opacity: 0.5"
