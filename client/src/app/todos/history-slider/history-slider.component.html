@@ -1,15 +1,20 @@
 <div *ngIf="(todoEventSummaries$ | async) as todoEventSummaries">
   <small class="text-muted">
-    {{
-      todoEventSummaries[showingTodosAtHistoryIndex]?.timestamp | date: 'medium'
-    }}
-
-    &nbsp;
+    <span class="mr-2"
+      >{{
+        todoEventSummaries[showingTodosAtHistoryIndex]?.timestamp
+          | date: 'medium'
+      }}
+    </span>
+    <span class="text-black-50">{{
+      todoEventSummaries[showingTodosAtHistoryIndex]?.userId
+    }}</span>
   </small>
   <div>
-    <strong>{{ todoEventSummaries[showingTodosAtHistoryIndex]?.title }}</strong>
-    {{ todoEventSummaries[showingTodosAtHistoryIndex]?.summary }}&nbsp;
+    <strong>{{ todoEventSummaries[showingTodosAtHistoryIndex]?.title }}</strong
+    ><br />
   </div>
+  <div>{{ todoEventSummaries[showingTodosAtHistoryIndex]?.summary }}</div>
 
   <form
     [formGroup]="form"

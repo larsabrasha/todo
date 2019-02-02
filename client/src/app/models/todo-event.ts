@@ -6,6 +6,7 @@ import { TodoWasUpdatedPayload } from './payloads/todo-was-updated-payload';
 import { TodoEventType } from './todo-event-type';
 
 export class TodoEvent {
+  userId: string;
   timestamp: number;
   type: TodoEventType;
   payload:

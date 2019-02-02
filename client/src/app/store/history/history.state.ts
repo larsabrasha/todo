@@ -47,6 +47,7 @@ export class HistoryState {
       }
 
       return {
+        userId: x.userId,
         timestamp: x.timestamp,
         title: title,
         summary: summary,

@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
 } from '@nestjs/common';
 import { Todo } from '../models/todo';
 import { TodoEventType } from '../models/toto-event-type';
@@ -18,15 +19,16 @@ export class TodosController {
 
   @Get('source')
   @Header('content-type', 'text/plain')
-  getSource() {
+  getSource(@Req() req) {
     const source = this.todosService.getTodosAsString();
     return source != null ? source : '';
   }
 
   @Put('source')
   @Header('content-type', 'text/plain')
-  putSource(@Body() text) {
+  putSource(@Body() text, @Req() req) {
     this.todosService.handleTodoEvent({
+      userId: this.getSub(req),
       timestamp: new Date().getTime(),
       type: TodoEventType.SourceWasUpdated,
       payload: { text },
@@ -36,7 +38,7 @@ export class TodosController {
   }
 
   @Get()
-  getTodos(@Query() query): Promise<Todo[]> | Todo[] {
+  getTodos(@Query() query, @Req() req): Promise<Todo[]> | Todo[] {
     if (query.untilHistoryIndex != null) {
       return this.todosService.getTodosFromEventsUntilIndex(
         query.untilHistoryIndex
@@ -47,8 +49,9 @@ export class TodosController {
   }
 
   @Post()
-  addTodo(@Body() todo: Todo): Todo[] {
+  addTodo(@Body() todo: Todo, @Req() req): Todo[] {
     return this.todosService.handleTodoEvent({
+      userId: this.getSub(req),
       timestamp: new Date().getTime(),
       type: TodoEventType.TodoWasAdded,
       payload: { todo },
@@ -56,8 +59,13 @@ export class TodosController {
   }
 
   @Put(':index')
-  updateTodo(@Body() todo: Todo, @Param('index') index: number): Todo[] {
+  updateTodo(
+    @Body() todo: Todo,
+    @Param('index') index: number,
+    @Req() req
+  ): Todo[] {
     return this.todosService.handleTodoEvent({
+      userId: this.getSub(req),
       timestamp: new Date().getTime(),
       type: TodoEventType.TodoWasUpdated,
       payload: { todo, index },
@@ -65,8 +73,9 @@ export class TodosController {
   }
 
   @Post('move-todo')
-  moveTodo(@Query() query): Todo[] {
+  moveTodo(@Query() query, @Req() req): Todo[] {
     return this.todosService.handleTodoEvent({
+      userId: this.getSub(req),
       timestamp: new Date().getTime(),
       type: TodoEventType.TodoWasMoved,
       payload: { fromIndex: query.fromIndex, toIndex: query.toIndex },
@@ -74,8 +83,9 @@ export class TodosController {
   }
 
   @Post('delete-completed')
-  deleteCompletedTodos() {
+  deleteCompletedTodos(@Req() req) {
     return this.todosService.handleTodoEvent({
+      userId: this.getSub(req),
       timestamp: new Date().getTime(),
       type: TodoEventType.CompletedTodosWasDeleted,
       payload: {},
@@ -85,5 +95,9 @@ export class TodosController {
   @Get('todo-events')
   getTodoEvents() {
     return this.todosService.getTodoEvents();
+  }
+
+  getSub(req) {
+    return req.jwt.claims.sub;
   }
 }
