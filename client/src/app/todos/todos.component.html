@@ -41,8 +41,6 @@
       (click)="toggle(i)"
       cdkDrag
       [cdkDragData]="todo"
-      tabindex="0"
-      (keydown.enter)="toggle(i)"
     >
       <div class="d-flex">
         <div class="px-3 py-2">{{ todo.title }}</div>
