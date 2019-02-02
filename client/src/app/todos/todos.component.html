@@ -41,6 +41,8 @@
       (click)="toggle(i)"
       cdkDrag
       [cdkDragData]="todo"
+      tabindex="0"
+      (keydown.enter)="toggle(i)"
     >
       <div
         class="float-right ml-1"
