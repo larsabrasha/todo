@@ -8,13 +8,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
-import { OktaAuthModule } from '@okta/okta-angular';
 import { GravatarModule } from 'ngx-gravatar';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthInterceptor } from './auth-interceptor';
-import { ProfileComponent } from './profile/profile.component';
 import { appState } from './store/app.state';
 import { HistorySliderComponent } from './todos/history-slider/history-slider.component';
 import { SourceEditorComponent } from './todos/source-editor/source-editor.component';
@@ -25,7 +23,6 @@ registerLocaleData(localeSv, 'sv');
 @NgModule({
   declarations: [
     AppComponent,
-    ProfileComponent,
     TodosComponent,
     SourceEditorComponent,
     HistorySliderComponent,
@@ -38,7 +35,6 @@ registerLocaleData(localeSv, 'sv');
     ReactiveFormsModule,
     BrowserAnimationsModule,
     DragDropModule,
-    OktaAuthModule.initAuth(environment.oktaConfig),
     NgxsModule.forRoot(appState, {
       developmentMode: !environment.production,
     }),

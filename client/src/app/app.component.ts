@@ -1,7 +1,22 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { OktaAuthService } from '@okta/okta-angular';
-import { Subscription } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subscription } from 'rxjs';
+import { environment } from '../environments/environment';
+import { IAppState } from './store/app.state';
+import {
+  TokenWasUpdated,
+  UserDidLogout,
+} from './store/user-context/user-context.actions';
 
 @Component({
   selector: 'app-root',
@@ -9,39 +24,95 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  isAuthenticated: boolean;
-  authenticationStateSub: Subscription;
-  email: string;
+  ssoConfig = environment.ssoConfig;
 
-  constructor(public oktaAuth: OktaAuthService, private router: Router) {
-    // Subscribe to authentication state changes
-    this.authenticationStateSub = this.oktaAuth.$authenticationState.subscribe(
-      async (isAuthenticated: boolean) => {
-        this.isAuthenticated = isAuthenticated;
-        this.email = (await this.oktaAuth.getUser()).email;
-      }
+  @ViewChild('sso')
+  sso: ElementRef;
+
+  isAuthenticated: boolean | null;
+  isAuthenticatedSub: Subscription;
+
+  trustedSsoIframeUrl: SafeUrl;
+
+  @Select((state: IAppState) => state.userContext.email)
+  email$: Observable<string>;
+
+  @Select((state: IAppState) => state.userContext.name)
+  name$: Observable<string>;
+
+  @HostListener('window:message', ['$event'])
+  onWindowMessage(event: any) {
+    this.handleWindowMessage(event);
+  }
+
+  constructor(
+    private store: Store,
+    sanitizer: DomSanitizer,
+    private router: Router,
+    private ngZone: NgZone
+  ) {
+    this.trustedSsoIframeUrl = sanitizer.bypassSecurityTrustResourceUrl(
+      this.ssoConfig.iframeUrl
     );
   }
 
-  async ngOnInit() {
-    // Get the authentication state for immediate use
-    this.isAuthenticated = await this.oktaAuth.isAuthenticated();
+  ngOnInit() {
+    this.isAuthenticatedSub = this.store
+      .select((state: IAppState) => state.userContext.isAuthenticated)
+      .subscribe(x => {
+        this.isAuthenticated = x;
 
-    if (this.isAuthenticated) {
-      this.email = (await this.oktaAuth.getUser()).email;
-      this.router.navigate(['/todos']);
-    }
+        console.log('isAuthenticated', this.isAuthenticated);
+
+        if (this.isAuthenticated === true) {
+          console.log('navigate to /todos');
+          this.router.navigate(['/todos']);
+        }
+      });
   }
 
   ngOnDestroy() {
-    this.authenticationStateSub.unsubscribe();
+    this.isAuthenticatedSub.unsubscribe();
+  }
+
+  handleWindowMessage(event: any) {
+    if (event.origin === this.ssoConfig.url) {
+      const message = JSON.parse(event.data) as {
+        type: string;
+        data: string;
+      };
+
+      console.log(
+        `[client] ${message.type}${
+          message.data != null ? ': ' + message.data : ''
+        }`
+      );
+
+      if (message.type === 'ready') {
+        this.sso.nativeElement.contentWindow.postMessage(
+          `{"type": "getToken", "data": "${this.ssoConfig.aud}"}`,
+          this.ssoConfig.url
+        );
+      } else if (message.type === 'token') {
+        this.store.dispatch(new TokenWasUpdated(message.data));
+      } else if (message.type === 'userDidLogout') {
+        // this.ngZone.run(() => {
+        this.store.dispatch(new UserDidLogout());
+        // });
+      }
+    }
   }
 
   login() {
-    this.oktaAuth.loginRedirect('/todos');
+    window.location.href = `${
+      this.ssoConfig.url
+    }?callbackUrl=${encodeURIComponent(this.ssoConfig.callbackUrl)}`;
   }
 
   logout() {
-    this.oktaAuth.logout('/');
+    this.sso.nativeElement.contentWindow.postMessage(
+      '{"type": "logout"}',
+      this.ssoConfig.url
+    );
   }
 }

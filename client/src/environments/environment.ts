@@ -4,10 +4,11 @@
 
 export const environment = {
   production: false,
-  oktaConfig: {
-    issuer: 'https://dev-864778.oktapreview.com/oauth2/default',
-    redirectUri: window.location.origin + '/implicit/callback',
-    clientId: '0oahkwubz9Vyq8CPj0h7',
+  ssoConfig: {
+    url: 'http://localhost:4000',
+    iframeUrl: 'http://localhost:4000/iframe',
+    callbackUrl: 'http://localhost:4200',
+    aud: 'larsabrasha.todo',
   },
 };
 

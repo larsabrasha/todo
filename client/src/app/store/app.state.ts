@@ -6,12 +6,15 @@ import { TodosSourceStateModel } from './todos-source/todos-source.model';
 import { TodosSourceState } from './todos-source/todos-source.state';
 import { TodosStateModel } from './todos/todos.model';
 import { TodosState } from './todos/todos.state';
+import { UserContextStateModel } from './user-context/user-context.model';
+import { UserContextState } from './user-context/user-context.state';
 
 export interface IAppState {
   layout: LayoutStateModel;
   todos: TodosStateModel;
   todosSource: TodosSourceStateModel;
   history: HistoryStateModel;
+  userContext: UserContextStateModel;
 }
 
 export const appState = [
@@ -19,4 +22,5 @@ export const appState = [
   TodosState,
   TodosSourceState,
   HistoryState,
+  UserContextState,
 ];

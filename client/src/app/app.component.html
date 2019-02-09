@@ -1,12 +1,13 @@
 <!-- As a link -->
 <nav class="navbar navbar-light">
   <div class="container">
-      <a class="navbar-brand" [routerLink]="[isAuthenticated ? '/todos' : '/']"
+    <a
+      class="navbar-brand"
+      [routerLink]="[isAuthenticated === true ? '/todos' : '/']"
       >Todo</a
     >
-
     <span class="ml-auto">
-      <span *ngIf="isAuthenticated">
+      <span *ngIf="isAuthenticated === true">
         <div class="dropdown">
           <a
             id="dropdownMenuLink"
@@ -16,17 +17,28 @@
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <img ngxGravatar [email]="email" *ngIf="email != null"/>
+            <img
+              ngxGravatar
+              [email]="email"
+              *ngIf="(email$ | async) as email"
+            />
           </a>
           <div
-            class="dropdown-menu dropdown-menu-right"
+            class="dropdown-menu dropdown-menu-right shadow"
             aria-labelledby="dropdownMenuLink"
           >
+            <div class="px-4 text-muted" style="font-size: 14px">
+              <div>
+                <strong>{{ name$ | async }}</strong>
+              </div>
+              <div>{{ email$ | async }}</div>
+              <div class="dropdown-divider"></div>
+            </div>
             <a
               href=""
               class="dropdown-item"
               (click)="logout(); $event.preventDefault()"
-              >Logout</a
+              >Log out</a
             >
           </div>
         </div>
@@ -35,10 +47,23 @@
   </div>
 </nav>
 
-<div *ngIf="isAuthenticated === false" class="text-center" style="margin-top:100px">
+<div
+  class="text-center"
+  style="margin-top:100px"
+  *ngIf="isAuthenticated === false"
+>
   <button class="btn btn-primary btn-lg px-4" (click)="login()">
-    Login
+    Log in
   </button>
 </div>
 
-<div class="container" style="padding-bottom: 100px"><router-outlet></router-outlet></div>
+<div class="container" style="padding-bottom: 100px">
+  <router-outlet></router-outlet>
+</div>
+
+<iframe
+  #sso
+  [src]="trustedSsoIframeUrl"
+  tabindex="-1"
+  style="width: 1px; height: 1px; position: absolute; top: -100px;"
+></iframe>

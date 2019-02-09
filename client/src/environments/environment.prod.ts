@@ -1,8 +1,9 @@
 export const environment = {
   production: true,
-  oktaConfig: {
-    issuer: '$OKTA_ISSUER',
-    redirectUri: '$OKTA_REDIRECT_URI',
-    clientId: '$OKTA_CLIENT',
+  ssoConfig: {
+    url: '$SSO_URL',
+    iframeUrl: '$SSO_IFRAME_URL',
+    callbackUrl: '$SSO_CALLBACK_URL',
+    aud: '$SSO_AUD',
   },
 };
