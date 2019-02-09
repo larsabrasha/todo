@@ -1,8 +1,5 @@
-export const oktaConfig = {
-  issuer: 'https://dev-864778.oktapreview.com/oauth2/default',
-  clientId: '0oahkwubz9Vyq8CPj0h7',
-  assertClaims: {
-    aud: 'api://default',
-    cid: '0oahkwubz9Vyq8CPj0h7',
-  },
+export const environment = {
+  iss: 'http://localhost:4000',
+  aud: 'larsabrasha.todo',
+  secret: 'JXZbMn@RmGvdzTukomdovF3u',
 };

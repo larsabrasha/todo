@@ -21,10 +21,10 @@
   "dependencies": {
     "@nestjs/common": "^5.4.0",
     "@nestjs/core": "^5.4.0",
+    "@nestjs/jwt": "^0.3.0",
     "@nestjs/microservices": "^5.4.0",
     "@nestjs/testing": "^5.4.0",
     "@nestjs/websockets": "^5.4.0",
-    "@okta/jwt-verifier": "0.0.14",
     "event-stream": "3.3.4",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",

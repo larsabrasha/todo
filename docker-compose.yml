@@ -2,7 +2,7 @@ version: "3"
 
 services:
   todo_client:
-    image: todo_client:latest
+    image: todo-client:latest
     restart: unless-stopped
     depends_on:
       - todo_server
@@ -14,11 +14,12 @@ services:
       - OKTA_CLIENT=$OKTA_CLIENT
 
   todo_server:
-    image: todo_server:latest
+    image: todo-server:latest
     restart: unless-stopped
     environment:
-      - OKTA_ISSUER=$OKTA_ISSUER
-      - OKTA_CLIENT=$OKTA_CLIENT
+      - ISS=$ISS
+      - AUD=$AUD
+      - SECRET=$SECRET
     volumes:
       - ${PWD}/data:/usr/src/app/data
 

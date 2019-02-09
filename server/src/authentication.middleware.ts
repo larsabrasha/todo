@@ -1,11 +1,11 @@
 import { Injectable, MiddlewareFunction, NestMiddleware } from '@nestjs/common';
-import { oktaConfig } from './environments/environment';
-// tslint:disable-next-line:no-var-requires
-const OktaJwtVerifier = require('@okta/jwt-verifier');
+import { JwtService } from '@nestjs/jwt';
+import { JsonWebTokenError } from 'jsonwebtoken';
+import { environment } from './environments/environment';
 
 @Injectable()
 export class AuthenticationMiddleware implements NestMiddleware {
-  oktaJwtVerifier = new OktaJwtVerifier(oktaConfig);
+  constructor(private jwtService: JwtService) {}
 
   resolve(...args: any[]): MiddlewareFunction {
     return (req, res, next) => {
@@ -18,15 +18,28 @@ export class AuthenticationMiddleware implements NestMiddleware {
 
       const accessToken = match[1];
 
-      return this.oktaJwtVerifier
-        .verifyAccessToken(accessToken)
-        .then(jwt => {
-          req.jwt = jwt;
-          next();
-        })
-        .catch(err => {
-          res.status(401).send(err.message);
-        });
+      try {
+        const decodedToken = this.jwtService.verify(accessToken);
+
+        if (
+          decodedToken.iss !== environment.iss ||
+          decodedToken.aud !== environment.aud ||
+          new Date().getTime() > decodedToken.exp * 1000
+        ) {
+          res.status(401).send('Invalid token');
+          return;
+        }
+
+        req.decodedToken = decodedToken;
+        next();
+      } catch (e) {
+        if (e instanceof JsonWebTokenError) {
+          res.status(401).send('Invalid token');
+          return;
+        } else {
+          throw e;
+        }
+      }
     };
   }
 }

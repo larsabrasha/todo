@@ -6,5 +6,5 @@ COPY . .
 RUN mv src/environments/environment.prod.ts src/environments/environment.ts && \
     npm run build
 EXPOSE 3000
-CMD sed -i -e 's,$OKTA_ISSUER,'"$OKTA_ISSUER"',' -e 's,$OKTA_CLIENT,'"$OKTA_CLIENT"',' dist/environments/environment.js \
+CMD sed -i -e 's,$ISS,'"$ISS"',' -e 's,$AUD,'"$AUD"',' -e 's,$SECRET,'"$SECRET"',' dist/environments/environment.js \
     && node dist/main.js

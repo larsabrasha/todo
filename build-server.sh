@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-docker build -t todo_server server
+docker build -t todo-server server

@@ -19,7 +19,7 @@ export class TodosController {
 
   @Get('source')
   @Header('content-type', 'text/plain')
-  getSource(@Req() req) {
+  getSource() {
     const source = this.todosService.getTodosAsString();
     return source != null ? source : '';
   }
@@ -38,7 +38,7 @@ export class TodosController {
   }
 
   @Get()
-  getTodos(@Query() query, @Req() req): Promise<Todo[]> | Todo[] {
+  getTodos(@Query() query): Promise<Todo[]> | Todo[] {
     if (query.untilHistoryIndex != null) {
       return this.todosService.getTodosFromEventsUntilIndex(
         query.untilHistoryIndex
@@ -98,6 +98,6 @@ export class TodosController {
   }
 
   getSub(req) {
-    return req.jwt.claims.sub;
+    return req.decodedToken.sub;
   }
 }
