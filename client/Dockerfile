@@ -11,5 +11,11 @@ FROM nginx:1.15-alpine
 COPY --from=node /app/dist/client /usr/share/nginx/html
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 CMD find /usr/share/nginx/html/main.*.js -type f -exec \
-  sed -i -e 's,$OKTA_ISSUER,'"$OKTA_ISSUER"',' -e 's,$OKTA_REDIRECT_URI,'"$OKTA_REDIRECT_URI"',' -e 's,$OKTA_CLIENT,'"$OKTA_CLIENT"',' \
-  {} \; && nginx -g 'daemon off;'
+  sed -i \
+  -e 's,$SSO_URL,'"$SSO_URL"',' \
+  -e 's,$SSO_IFRAME_URL,'"$SSO_IFRAME_URL"',' \
+  -e 's,$SSO_CALLBACK_URL,'"$SSO_CALLBACK_URL"',' \
+  -e 's,$SSO_AUD,'"$SSO_AUD"',' \
+  {} \; \
+  && nginx -g 'daemon off;'
+
