@@ -63,11 +63,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.isAuthenticated = x;
 
         console.log('isAuthenticated', this.isAuthenticated);
-
-        if (this.isAuthenticated === true) {
-          console.log('navigate to /todos');
-          this.router.navigate(['/todos']);
-        }
       });
   }
 
@@ -96,9 +91,7 @@ export class AppComponent implements OnInit, OnDestroy {
       } else if (message.type === 'token') {
         this.store.dispatch(new TokenWasUpdated(message.data));
       } else if (message.type === 'userDidLogout') {
-        // this.ngZone.run(() => {
         this.store.dispatch(new UserDidLogout());
-        // });
       }
     }
   }

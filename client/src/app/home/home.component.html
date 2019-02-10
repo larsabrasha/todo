@@ -1,0 +1,2 @@
+<app-hero *ngIf="(isAuthenticated$ | async) == false"></app-hero>
+<app-todos *ngIf="(isAuthenticated$ | async) === true"></app-todos>

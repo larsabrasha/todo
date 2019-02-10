@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
 import { SourceEditorComponent } from './todos/source-editor/source-editor.component';
-import { TodosComponent } from './todos/todos.component';
 import { TokenGuard } from './token.guard';
 
 const routes: Routes = [
   {
-    path: 'todos',
-    component: TodosComponent,
-    canActivate: [TokenGuard],
+    path: '',
+    pathMatch: 'full',
+    component: HomeComponent,
   },
   {
     path: 'todos/source-editor',

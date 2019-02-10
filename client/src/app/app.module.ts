@@ -17,6 +17,8 @@ import { appState } from './store/app.state';
 import { HistorySliderComponent } from './todos/history-slider/history-slider.component';
 import { SourceEditorComponent } from './todos/source-editor/source-editor.component';
 import { TodosComponent } from './todos/todos.component';
+import { HomeComponent } from './home/home.component';
+import { HeroComponent } from './hero/hero.component';
 
 registerLocaleData(localeSv, 'sv');
 
@@ -26,6 +28,8 @@ registerLocaleData(localeSv, 'sv');
     TodosComponent,
     SourceEditorComponent,
     HistorySliderComponent,
+    HomeComponent,
+    HeroComponent,
   ],
   imports: [
     BrowserModule,
