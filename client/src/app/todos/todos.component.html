@@ -1,82 +1,84 @@
 <div class="pt-3 list-group mx-auto" style="max-width: 500px">
-  <div class="mb-1">
-    <div class="d-flex">
-      <div class="ml-auto">
-        <a
-          href=""
-          class="mr-1 btn btn-sm btn-light text-muted"
-          [class.active]="showingHistory"
-          (click)="toggleHistory(); $event.preventDefault()"
-          ><small><i class="fas fa-history"></i></small
-        ></a>
-        <a
-          [routerLink]="['/todos/source-editor']"
-          class="btn btn-sm btn-light text-muted"
-          title="Edit source"
-          ><small><i class="fas fa-code"></i></small
-        ></a>
-      </div>
-    </div>
-  </div>
-
-  <app-history-slider *ngIf="showingHistory"></app-history-slider>
-
-  <div
-    *ngIf="(todos$ | async) as todos"
-    class="mb-3"
-    cdkDropList
-    (cdkDropListDropped)="drop($event)"
-    [cdkDropListDisabled]="showingHistory"
-  >
-    <div
-      *ngFor="let todo of todos; index as i"
-      class="list-group-item list-group-item-action p-0"
-      [class.bg-checked]="todo.checked"
-      [class.bg-unchecked]="todo.checked == false"
-      [ngStyle]="{
-        'text-decoration': todo.checked ? 'line-through' : 'none',
-        opacity: todo.checked ? 0.25 : 1
-      }"
-      style="user-select: none; cursor: pointer;"
-      (click)="toggle(i)"
-      cdkDrag
-      [cdkDragData]="todo"
-    >
+  <div class="container">
+    <div class="mb-1">
       <div class="d-flex">
-        <div class="px-3 py-2">{{ todo.title }}</div>
-        <div
-          class="px-3 py-2 ml-auto"
-          cdkDragHandle
-          style="cursor: move; opacity: 0.1"
-        >
-          <i class="fa fa-arrows-alt"></i>
+        <div class="ml-auto">
+          <a
+            href=""
+            class="mr-1 btn btn-sm btn-light text-muted"
+            [class.active]="showingHistory"
+            (click)="toggleHistory(); $event.preventDefault()"
+            ><small><i class="fas fa-history"></i></small
+          ></a>
+          <a
+            [routerLink]="['/todos/source-editor']"
+            class="btn btn-sm btn-light text-muted"
+            title="Edit source"
+            ><small><i class="fas fa-code"></i></small
+          ></a>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="mb-3">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" action="#">
-      <input
-        type="text"
-        class="px-3 py-2 form-control gentle"
-        [placeholder]="placeholder"
-        formControlName="title"
-        style="opacity: 0.5"
-        (focus)="onFocus()"
-        (blur)="onBlur()"
-        *ngIf="!showingHistory"
-      />
-    </form>
-  </div>
+    <app-history-slider *ngIf="showingHistory"></app-history-slider>
 
-  <div class="mb-1 text-center">
-    <button
-      class="btn btn-sm btn-light text-muted"
-      (click)="deleteCompletedTodos()"
-      *ngIf="!showingHistory && (anyCheckedTodos$ | async)"
+    <div
+      *ngIf="(todos$ | async) as todos"
+      class="mb-3"
+      cdkDropList
+      (cdkDropListDropped)="drop($event)"
+      [cdkDropListDisabled]="showingHistory"
     >
-      <small>Clear completed</small>
-    </button>
+      <div
+        *ngFor="let todo of todos; index as i"
+        class="list-group-item list-group-item-action p-0"
+        [class.bg-checked]="todo.checked"
+        [class.bg-unchecked]="todo.checked == false"
+        [ngStyle]="{
+          'text-decoration': todo.checked ? 'line-through' : 'none',
+          opacity: todo.checked ? 0.25 : 1
+        }"
+        style="user-select: none; cursor: pointer;"
+        (click)="toggle(i)"
+        cdkDrag
+        [cdkDragData]="todo"
+      >
+        <div class="d-flex">
+          <div class="px-3 py-2">{{ todo.title }}</div>
+          <div
+            class="px-3 py-2 ml-auto"
+            cdkDragHandle
+            style="cursor: move; opacity: 0.1"
+          >
+            <i class="fa fa-arrows-alt"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" action="#">
+        <input
+          type="text"
+          class="px-3 py-2 form-control gentle"
+          [placeholder]="placeholder"
+          formControlName="title"
+          style="opacity: 0.5"
+          (focus)="onFocus()"
+          (blur)="onBlur()"
+          *ngIf="!showingHistory"
+        />
+      </form>
+    </div>
+
+    <div class="mb-1 text-center">
+      <button
+        class="btn btn-sm btn-light text-muted"
+        (click)="deleteCompletedTodos()"
+        *ngIf="!showingHistory && (anyCheckedTodos$ | async)"
+      >
+        <small>Clear completed</small>
+      </button>
+    </div>
   </div>
 </div>
