@@ -8,6 +8,7 @@ RUN npm run build -- --prod
 
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
 FROM nginx:1.15-alpine
+COPY --from=node /app/robots.txt /usr/share/nginx/html
 COPY --from=node /app/dist/client /usr/share/nginx/html
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 CMD find /usr/share/nginx/html/main.*.js -type f -exec \
