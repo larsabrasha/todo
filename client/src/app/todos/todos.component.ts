@@ -24,7 +24,7 @@ import { TodosState } from '../store/todos/todos.state';
 @Component({
   selector: 'app-todos',
   templateUrl: './todos.component.html',
-  styleUrls: ['./todos.component.scss'],
+  styleUrls: ['./todos.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodosComponent implements OnInit, OnDestroy {

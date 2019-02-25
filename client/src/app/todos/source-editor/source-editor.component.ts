@@ -12,7 +12,7 @@ import {
 @Component({
   selector: 'app-source-editor',
   templateUrl: './source-editor.component.html',
-  styleUrls: ['./source-editor.component.scss'],
+  styleUrls: ['./source-editor.component.css'],
 })
 export class SourceEditorComponent implements OnInit {
   form: FormGroup;

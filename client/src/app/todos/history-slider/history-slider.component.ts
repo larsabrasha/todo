@@ -11,7 +11,7 @@ import { ShowTodosAtHistoryIndex } from 'src/app/store/todos/todos.actions';
 @Component({
   selector: 'app-history-slider',
   templateUrl: './history-slider.component.html',
-  styleUrls: ['./history-slider.component.scss'],
+  styleUrls: ['./history-slider.component.css'],
 })
 export class HistorySliderComponent implements OnInit, OnDestroy {
   @Select(HistoryState.getTodoEventSummaries)
