@@ -13,21 +13,21 @@ import { Todo } from '../models/todo';
 import { TodoEventType } from '../models/toto-event-type';
 import { TodosService } from './todos.service';
 
-@Controller('todos')
+@Controller('todo-lists/:todoListId/todos')
 export class TodosController {
   constructor(private todosService: TodosService) {}
 
   @Get('source')
   @Header('content-type', 'text/plain')
-  getSource() {
-    const source = this.todosService.getTodosAsString();
+  getSource(@Param('todoListId') todoListId: string) {
+    const source = this.todosService.getTodosAsString(todoListId);
     return source != null ? source : '';
   }
 
   @Put('source')
   @Header('content-type', 'text/plain')
-  putSource(@Body() text, @Req() req) {
-    this.todosService.handleTodoEvent({
+  putSource(@Param('todoListId') todoListId: string, @Body() text, @Req() req) {
+    this.todosService.handleTodoEvent(todoListId, {
       userId: this.getSub(req),
       timestamp: new Date().getTime(),
       type: TodoEventType.SourceWasUpdated,
@@ -38,19 +38,27 @@ export class TodosController {
   }
 
   @Get()
-  getTodos(@Query() query): Promise<Todo[]> | Todo[] {
+  getTodos(
+    @Param('todoListId') todoListId: string,
+    @Query() query
+  ): Promise<Todo[]> | Todo[] {
     if (query.untilHistoryIndex != null) {
       return this.todosService.getTodosFromEventsUntilIndex(
+        todoListId,
         query.untilHistoryIndex
       );
     } else {
-      return this.todosService.getTodos();
+      return this.todosService.getTodos(todoListId);
     }
   }
 
   @Post()
-  addTodo(@Body() todo: Todo, @Req() req): Todo[] {
-    return this.todosService.handleTodoEvent({
+  addTodo(
+    @Param('todoListId') todoListId: string,
+    @Body() todo: Todo,
+    @Req() req
+  ): Todo[] {
+    return this.todosService.handleTodoEvent(todoListId, {
       userId: this.getSub(req),
       timestamp: new Date().getTime(),
       type: TodoEventType.TodoWasAdded,
@@ -60,11 +68,12 @@ export class TodosController {
 
   @Put(':index')
   updateTodo(
+    @Param('todoListId') todoListId: string,
     @Body() todo: Todo,
     @Param('index') index: number,
     @Req() req
   ): Todo[] {
-    return this.todosService.handleTodoEvent({
+    return this.todosService.handleTodoEvent(todoListId, {
       userId: this.getSub(req),
       timestamp: new Date().getTime(),
       type: TodoEventType.TodoWasUpdated,
@@ -73,8 +82,12 @@ export class TodosController {
   }
 
   @Post('move-todo')
-  moveTodo(@Query() query, @Req() req): Todo[] {
-    return this.todosService.handleTodoEvent({
+  moveTodo(
+    @Param('todoListId') todoListId: string,
+    @Query() query,
+    @Req() req
+  ): Todo[] {
+    return this.todosService.handleTodoEvent(todoListId, {
       userId: this.getSub(req),
       timestamp: new Date().getTime(),
       type: TodoEventType.TodoWasMoved,
@@ -83,8 +96,8 @@ export class TodosController {
   }
 
   @Post('delete-completed')
-  deleteCompletedTodos(@Req() req) {
-    return this.todosService.handleTodoEvent({
+  deleteCompletedTodos(@Param('todoListId') todoListId: string, @Req() req) {
+    return this.todosService.handleTodoEvent(todoListId, {
       userId: this.getSub(req),
       timestamp: new Date().getTime(),
       type: TodoEventType.CompletedTodosWasDeleted,
@@ -93,8 +106,8 @@ export class TodosController {
   }
 
   @Get('todo-events')
-  getTodoEvents() {
-    return this.todosService.getTodoEvents();
+  getTodoEvents(@Param('todoListId') todoListId: string) {
+    return this.todosService.getTodoEvents(todoListId);
   }
 
   getSub(req) {

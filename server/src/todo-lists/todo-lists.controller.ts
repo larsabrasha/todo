@@ -27,7 +27,15 @@ export class TodoListsController {
   @Get()
   get(): TodoList[] {
     const todoListsAsString = this.readFileAsString(this.sourceFilePath);
-    return todoListsAsString != null ? JSON.parse(todoListsAsString) : [];
+
+    const todoLists = JSON.parse(todoListsAsString);
+
+    return todoListsAsString != null
+      ? todoLists.sort(
+          (a: TodoList, b: TodoList) =>
+            a.name.toLowerCase() > b.name.toLowerCase()
+        )
+      : [];
   }
 
   @Post()

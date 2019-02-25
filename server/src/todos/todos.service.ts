@@ -14,34 +14,30 @@ import { TodoEventType } from '../models/toto-event-type';
 export class TodosService {
   private readonly logger = new Logger(TodosService.name);
 
-  sourceFilePath: string;
-  eventSourceFilePath: string;
   regex = /(x)?\s?(\([A-Z]\))?\s?(\d{4}\-\d{2}\-\d{2})?\s?(\d{4}\-\d{2}\-\d{2})?\s?(.*)/;
 
-  constructor() {
-    this.sourceFilePath = this.getAbsoluteFilePath('./data/todo.txt');
-    this.ensureDirectoryExistence(this.sourceFilePath);
-
-    this.eventSourceFilePath = this.getAbsoluteFilePath(
-      './data/todo-events.txt'
-    );
-    this.ensureDirectoryExistence(this.eventSourceFilePath);
+  getSourceFilePath(todoListId: string) {
+    return this.getAbsoluteFilePath(`./data/${todoListId}/todo.txt`);
   }
 
-  handleTodoEvent(todoEvent: TodoEvent): Todo[] {
-    const todoEventAsJson = JSON.stringify(todoEvent);
-    fs.appendFileSync(
-      this.eventSourceFilePath,
-      todoEventAsJson + '\n',
-      'UTF-8'
-    );
+  getEventSourceFilePath(todoListId: string) {
+    return this.getAbsoluteFilePath(`./data/${todoListId}/todo-events.txt`);
+  }
 
-    const todos = this.applyTodoEvent(todoEvent, this.getTodos());
+  handleTodoEvent(todoListId: string, todoEvent: TodoEvent): Todo[] {
+    const todoEventAsJson = JSON.stringify(todoEvent);
+
+    const filePath = this.getEventSourceFilePath(todoListId);
+    this.ensureDirectoryExistence(filePath);
+
+    fs.appendFileSync(filePath, todoEventAsJson + '\n', 'UTF-8');
+
+    const todos = this.applyTodoEvent(todoEvent, this.getTodos(todoListId));
 
     if (typeof todos === 'string') {
-      this.saveTodosFromString(todos);
+      this.saveTodosFromString(todoListId, todos);
     } else {
-      this.saveTodos(todos);
+      this.saveTodos(todoListId, todos);
     }
 
     return todos;
@@ -93,9 +89,9 @@ export class TodosService {
     return todos.filter(x => !x.checked);
   }
 
-  getTodoEvents(): Promise<TodoEvent[]> {
+  getTodoEvents(todoListId: string): Promise<TodoEvent[]> {
     return new Promise((resolve, reject) => {
-      if (fs.existsSync(this.eventSourceFilePath) === false) {
+      if (fs.existsSync(this.getEventSourceFilePath(todoListId)) === false) {
         resolve([]);
         return;
       }
@@ -103,7 +99,7 @@ export class TodosService {
       const todoEvents = [];
 
       const stream = fs
-        .createReadStream(this.eventSourceFilePath)
+        .createReadStream(this.getEventSourceFilePath(todoListId))
         .pipe(eventStream.split())
         .pipe(
           eventStream
@@ -132,14 +128,17 @@ export class TodosService {
     return this.getTodosFromEventsUntilIndex(null);
   }
 
-  getTodosFromEventsUntilIndex(index: number = null): Promise<Todo[]> {
+  getTodosFromEventsUntilIndex(
+    todoListId: string,
+    index: number = null
+  ): Promise<Todo[]> {
     return new Promise((resolve, reject) => {
       let lineIndex = 0;
 
       let todos = [];
 
       const stream = fs
-        .createReadStream(this.eventSourceFilePath)
+        .createReadStream(this.getEventSourceFilePath(todoListId))
         .pipe(eventStream.split())
         .pipe(
           eventStream
@@ -171,25 +170,26 @@ export class TodosService {
     });
   }
 
-  getTodos() {
-    const source = this.getTodosAsString();
+  getTodos(todoListId: string) {
+    const source = this.getTodosAsString(todoListId);
     return source != null ? this.parseSource(source) : [];
   }
 
-  getTodosAsString(): string {
-    return fs.existsSync(this.eventSourceFilePath)
-      ? this.readFileAsString(this.sourceFilePath)
+  getTodosAsString(todoListId: string): string {
+    return fs.existsSync(this.getEventSourceFilePath(todoListId))
+      ? this.readFileAsString(this.getSourceFilePath(todoListId))
       : null;
   }
 
-  saveTodos(todos: Todo[]) {
+  saveTodos(todoListId: string, todos: Todo[]) {
     const source = this.convertToSource(todos);
-    this.saveTodosFromString(source);
+    this.saveTodosFromString(todoListId, source);
   }
 
-  saveTodosFromString(text: string) {
-    this.ensureDirectoryExistence(this.sourceFilePath);
-    fs.writeFileSync(this.sourceFilePath, text, 'utf8');
+  saveTodosFromString(todoListId: string, text: string) {
+    const filePath = this.getSourceFilePath(todoListId);
+    this.ensureDirectoryExistence(filePath);
+    fs.writeFileSync(filePath, text, 'utf8');
   }
 
   parseSource(source: string): Todo[] {

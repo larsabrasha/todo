@@ -13,6 +13,6 @@ import { TodosService } from './todos/todos.service';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthenticationMiddleware).forRoutes('-*');
+    consumer.apply(AuthenticationMiddleware).forRoutes('*');
   }
 }
