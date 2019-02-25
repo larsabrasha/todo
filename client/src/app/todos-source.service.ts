@@ -8,18 +8,24 @@ import { Observable } from 'rxjs';
 export class TodosSourceService {
   constructor(private httpClient: HttpClient) {}
 
-  getSource(): Observable<string> {
-    return this.httpClient.get('api/todos/source', { responseType: 'text' });
+  getSource(todoListId: string): Observable<string> {
+    return this.httpClient.get(`api/todo-lists/${todoListId}/todos/source`, {
+      responseType: 'text',
+    });
   }
 
-  putSource(text: string): Observable<string> {
+  putSource(todoListId: string, text: string): Observable<string> {
     const headers = new HttpHeaders().set(
       'Content-Type',
       'text/plain; charset=utf-8'
     );
-    return this.httpClient.put('api/todos/source', text, {
-      headers,
-      responseType: 'text',
-    });
+    return this.httpClient.put(
+      `api/todo-lists/${todoListId}/todos/source`,
+      text,
+      {
+        headers,
+        responseType: 'text',
+      }
+    );
   }
 }

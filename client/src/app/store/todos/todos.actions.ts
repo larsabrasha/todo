@@ -1,3 +1,26 @@
+export class LoadTodoLists {
+  static readonly type = '[Todos] Load Todo Lists';
+}
+
+export class SelectTodoList {
+  static readonly type = '[Todos] Select Todo List';
+  constructor(public id: string) {}
+}
+
+export class DeleteSelectedTodoList {
+  static readonly type = '[Todos] Delete Selected Todo List';
+}
+
+export class CreateTodoList {
+  static readonly type = '[Todos] Create Todo List';
+  constructor(public name: string) {}
+}
+
+export class UpdateSelectedTodoListName {
+  static readonly type = '[Todos] Edit Selected Todo List Name';
+  constructor(public name: string) {}
+}
+
 export class LoadTodos {
   static readonly type = '[Todos] Load Todos';
 }
@@ -14,6 +37,7 @@ export class AddTodo {
 
 export class DeleteCompletedTodos {
   static readonly type = '[Todos] Delete Completed Todos';
+  constructor() {}
 }
 
 export class MoveTodo {

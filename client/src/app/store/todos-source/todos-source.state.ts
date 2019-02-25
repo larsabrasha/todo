@@ -1,6 +1,7 @@
-import { Action, State, StateContext } from '@ngxs/store';
+import { Action, State, StateContext, Store } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 import { TodosSourceService } from 'src/app/todos-source.service';
+import { IAppState } from '../app.state';
 import { GetTodosSource, PutTodosSource } from './todos-source.actions';
 import { defaults, TodosSourceStateModel } from './todos-source.model';
 
@@ -9,11 +10,18 @@ import { defaults, TodosSourceStateModel } from './todos-source.model';
   defaults: defaults,
 })
 export class TodosSourceState {
-  constructor(private todoSourceService: TodosSourceService) {}
+  constructor(
+    private todoSourceService: TodosSourceService,
+    private store: Store
+  ) {}
 
   @Action(GetTodosSource)
   getTodosSource(context: StateContext<TodosSourceStateModel>) {
-    return this.todoSourceService.getSource().pipe(
+    const todoListId = this.store.selectSnapshot(
+      (state: IAppState) => state.todos.selectedTodoListId
+    );
+
+    return this.todoSourceService.getSource(todoListId).pipe(
       tap(x => {
         context.patchState({
           source: x,
@@ -27,7 +35,11 @@ export class TodosSourceState {
     context: StateContext<TodosSourceStateModel>,
     action: PutTodosSource
   ) {
-    return this.todoSourceService.putSource(action.source).pipe(
+    const todoListId = this.store.selectSnapshot(
+      (state: IAppState) => state.todos.selectedTodoListId
+    );
+
+    return this.todoSourceService.putSource(todoListId, action.source).pipe(
       tap(x => {
         context.patchState({
           source: x,

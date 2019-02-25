@@ -2,6 +2,35 @@
   <div class="container">
     <div class="mb-1">
       <div class="d-flex">
+        <div *ngIf="(todoLists$ | async) as todoLists">
+          <div class="btn-group">
+            <button
+              class="btn btn-light btn-sm dropdown-toggle"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              {{ selectedTodoListName$ | async }}
+            </button>
+            <div class="dropdown-menu shadow">
+              <a
+                class="dropdown-item"
+                href="#"
+                *ngFor="let todoList of todoLists"
+                (click)="selectTodoList(todoList.id)"
+                >{{ todoList.name }}</a
+              >
+              <div class="dropdown-divider"></div>
+              <a
+                class="dropdown-item"
+                href=""
+                (click)="createTodoList(); $event.preventDefault()"
+                ><i class="fas fa-plus"></i> New List</a
+              >
+            </div>
+          </div>
+        </div>
         <div class="ml-auto">
           <a
             href=""
@@ -11,16 +40,40 @@
             ><small><i class="fas fa-history"></i></small
           ></a>
           <a
-            [routerLink]="['/todos/source-editor']"
+            href=""
             class="btn btn-sm btn-light text-muted"
             title="Edit source"
-            ><small><i class="fas fa-code"></i></small
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+            ><small><i class="fas fa-ellipsis-h"></i></small
           ></a>
+          <div class="dropdown-menu dropdown-menu-right shadow">
+            <a
+              href=""
+              class="dropdown-item"
+              (click)="editListName(); $event.preventDefault()"
+              ><i class="fas fa-pen fa-fw"></i> Edit Name</a
+            >
+            <a class="dropdown-item" [routerLink]="['/todos/source-editor']"
+              ><i class="fas fa-code fa-fw"></i> Edit Source</a
+            >
+            <div class="dropdown-divider"></div>
+            <a
+              href=""
+              class="dropdown-item"
+              (click)="deleteSelectedTodoList(); $event.preventDefault()"
+              ><i class="fas fa-trash fa-fw"></i> Delete</a
+            >
+          </div>
         </div>
       </div>
     </div>
 
-    <app-history-slider *ngIf="showingHistory"></app-history-slider>
+    <app-history-slider
+      *ngIf="showingHistory"
+      class="d-block px-2"
+    ></app-history-slider>
 
     <div
       *ngIf="(todos$ | async) as todos"

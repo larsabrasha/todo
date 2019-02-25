@@ -10,35 +10,55 @@ import { TodoEvent } from './models/todo-event';
 export class TodosService {
   constructor(private httpClient: HttpClient) {}
 
-  getTodos(untilHistoryIndex: number = null): Observable<Todo[]> {
+  getTodos(
+    todoListId: string,
+    untilHistoryIndex: number = null
+  ): Observable<Todo[]> {
     return this.httpClient.get<Todo[]>(
-      'api/todos' +
-        (untilHistoryIndex != null
+      `api/todo-lists/${todoListId}/todos${
+        untilHistoryIndex != null
           ? '?untilHistoryIndex=' + untilHistoryIndex
-          : '')
+          : ''
+      }`
     );
   }
 
-  postTodo(todo: Todo): Observable<Todo[]> {
-    return this.httpClient.post<Todo[]>('api/todos', todo);
-  }
-
-  putTodo(index: number, todo: Todo): Observable<Todo[]> {
-    return this.httpClient.put<Todo[]>(`api/todos/${index}`, todo);
-  }
-
-  moveTodo(fromIndex: number, toIndex: number): Observable<Todo[]> {
+  postTodo(todoListId: string, todo: Todo): Observable<Todo[]> {
     return this.httpClient.post<Todo[]>(
-      `api/todos/move-todo?fromIndex=${fromIndex}&toIndex=${toIndex}`,
+      `api/todo-lists/${todoListId}/todos`,
+      todo
+    );
+  }
+
+  putTodo(todoListId: string, index: number, todo: Todo): Observable<Todo[]> {
+    return this.httpClient.put<Todo[]>(
+      `api/todo-lists/${todoListId}/todos/${index}`,
+      todo
+    );
+  }
+
+  moveTodo(
+    todoListId: string,
+    fromIndex: number,
+    toIndex: number
+  ): Observable<Todo[]> {
+    return this.httpClient.post<Todo[]>(
+      `api/todo-lists/${todoListId}/todos/move-todo?fromIndex=${fromIndex}&toIndex=${toIndex}`,
       ''
     );
   }
 
-  deleteCompletedTodos(): Observable<Todo[]> {
-    return this.httpClient.post<Todo[]>(`api/todos/delete-completed`, {});
+  deleteCompletedTodos(todoListId: string): Observable<Todo[]> {
+    return this.httpClient.post<Todo[]>(
+      `api/todo-lists/${todoListId}/todos/delete-completed`,
+      {}
+    );
   }
 
-  getTodoEvents(): Observable<TodoEvent[]> {
-    return this.httpClient.get<TodoEvent[]>(`api/todos/todo-events`, {});
+  getTodoEvents(todoListId: string): Observable<TodoEvent[]> {
+    return this.httpClient.get<TodoEvent[]>(
+      `api/todo-lists/${todoListId}/todos/todo-events`,
+      {}
+    );
   }
 }

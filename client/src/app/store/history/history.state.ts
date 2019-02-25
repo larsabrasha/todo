@@ -1,4 +1,4 @@
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 import { SourceWasUpdatedPayload } from 'src/app/models/payloads/source-was-updated-payload';
 import { TodoWasAddedPayload } from 'src/app/models/payloads/todo-was-added-payload';
@@ -7,6 +7,7 @@ import { TodoWasUpdatedPayload } from 'src/app/models/payloads/todo-was-updated-
 import { TodoEventSummary } from 'src/app/models/todo-event-summary';
 import { TodoEventType } from 'src/app/models/todo-event-type';
 import { TodosService } from 'src/app/todos.service';
+import { IAppState } from '../app.state';
 import { ShowTodosAtHistoryIndex } from '../todos/todos.actions';
 import { LoadTodoEvents } from './history.actions';
 import { defaults, HistoryStateModel } from './history.model';
@@ -16,7 +17,7 @@ import { defaults, HistoryStateModel } from './history.model';
   defaults,
 })
 export class HistoryState {
-  constructor(private todosService: TodosService) {}
+  constructor(private todosService: TodosService, private store: Store) {}
 
   @Selector()
   static getTodoEventSummaries(state: HistoryStateModel): TodoEventSummary[] {
@@ -57,7 +58,11 @@ export class HistoryState {
 
   @Action(LoadTodoEvents)
   loadTodoEvents(context: StateContext<HistoryStateModel>) {
-    return this.todosService.getTodoEvents().pipe(
+    const selectedTodoListId = this.store.selectSnapshot(
+      (state: IAppState) => state.todos.selectedTodoListId
+    );
+
+    return this.todosService.getTodoEvents(selectedTodoListId).pipe(
       tap(x => {
         const maxHistoryIndex = x.length > 0 ? x.length - 1 : 0;
         context.patchState({
