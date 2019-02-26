@@ -1,16 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  NotFoundException,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import { TodoList } from 'src/models/todo-list';
+import { TodoList } from '../models/todo-list';
 // tslint:disable-next-line:no-var-requires
 const uuidv1 = require('uuid/v1');
 
