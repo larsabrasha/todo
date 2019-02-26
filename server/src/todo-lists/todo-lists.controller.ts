@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { TodoList } from '../models/todo-list';
@@ -21,12 +30,7 @@ export class TodoListsController {
 
     const todoLists = JSON.parse(todoListsAsString);
 
-    return todoListsAsString != null
-      ? todoLists.sort(
-          (a: TodoList, b: TodoList) =>
-            a.name.toLowerCase() > b.name.toLowerCase()
-        )
-      : [];
+    return this.sortTodoLists(todoLists);
   }
 
   @Post()
@@ -38,7 +42,7 @@ export class TodoListsController {
 
     this.saveTodoListsFromString(JSON.stringify(todoLists, null, '  '));
 
-    return todoLists;
+    return this.sortTodoLists(todoLists);
   }
 
   @Put(':id')
@@ -54,7 +58,7 @@ export class TodoListsController {
 
     this.saveTodoListsFromString(JSON.stringify(todoLists, null, '  '));
 
-    return todoLists;
+    return this.sortTodoLists(todoLists);
   }
 
   @Delete(':id')
@@ -68,7 +72,7 @@ export class TodoListsController {
       this.saveTodoListsFromString(JSON.stringify(todoLists, null, '  '));
     }
 
-    return todoLists;
+    return this.sortTodoLists(todoLists);
   }
 
   readFileAsString(filePath: string) {
@@ -95,5 +99,21 @@ export class TodoListsController {
     }
     this.ensureDirectoryExistence(dirname);
     fs.mkdirSync(dirname);
+  }
+
+  sortTodoLists(todoLists: TodoList[]): TodoList[] {
+    return todoLists != null
+      ? todoLists.sort((a: TodoList, b: TodoList) => {
+          if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return 1;
+          }
+
+          if (a.name.toLowerCase() < b.name.toLowerCase()) {
+            return -1;
+          }
+
+          return 0;
+        })
+      : [];
   }
 }
