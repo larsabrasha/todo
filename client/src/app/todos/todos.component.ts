@@ -55,7 +55,6 @@ export class TodosComponent implements OnInit, OnDestroy {
   showingHistorySub: Subscription;
 
   routeSub: Subscription;
-  selectedTodoListId: string;
 
   form: FormGroup;
 
@@ -74,8 +73,7 @@ export class TodosComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.routeSub = this.activatedRoute.params.subscribe(routeParams => {
-      this.selectedTodoListId = routeParams['id'];
-      this.store.dispatch(new LoadTodoLists(this.selectedTodoListId));
+      this.store.dispatch(new LoadTodoLists(routeParams['id']));
     });
 
     this.form = this.fb.group({

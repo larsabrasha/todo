@@ -58,7 +58,9 @@
             <a
               class="dropdown-item"
               [routerLink]="[
-                '/todo-lists/' + selectedTodoListId + '/source-editor'
+                '/todo-lists/' +
+                  (selectedTodoListId$ | async) +
+                  '/source-editor'
               ]"
               ><i class="fas fa-code fa-fw"></i> Edit Source</a
             >
