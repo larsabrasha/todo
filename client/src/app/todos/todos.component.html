@@ -18,7 +18,7 @@
                 class="dropdown-item"
                 href="#"
                 *ngFor="let todoList of todoLists"
-                (click)="selectTodoList(todoList.id)"
+                [routerLink]="['/todo-lists/' + todoList.id]"
                 >{{ todoList.name }}</a
               >
               <div class="dropdown-divider"></div>
@@ -55,7 +55,11 @@
               (click)="editListName(); $event.preventDefault()"
               ><i class="fas fa-pen fa-fw"></i> Edit Name</a
             >
-            <a class="dropdown-item" [routerLink]="['/todos/source-editor']"
+            <a
+              class="dropdown-item"
+              [routerLink]="[
+                '/todo-lists/' + selectedTodoListId + '/source-editor'
+              ]"
               ><i class="fas fa-code fa-fw"></i> Edit Source</a
             >
             <div class="dropdown-divider"></div>

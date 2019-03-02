@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subscription } from 'rxjs';
 import { IAppState } from 'src/app/store/app.state';
@@ -14,14 +14,18 @@ import {
   templateUrl: './source-editor.component.html',
   styleUrls: ['./source-editor.component.css'],
 })
-export class SourceEditorComponent implements OnInit {
+export class SourceEditorComponent implements OnInit, OnDestroy {
   form: FormGroup;
   sourceSub: Subscription;
+  routeSub: Subscription;
+
+  selectedTodoListId: string;
 
   constructor(
     private fb: FormBuilder,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   get source() {
@@ -29,20 +33,30 @@ export class SourceEditorComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.routeSub = this.activatedRoute.params.subscribe(routeParams => {
+      this.selectedTodoListId = routeParams['id'];
+      this.store.dispatch(new GetTodosSource(this.selectedTodoListId));
+    });
+
     this.form = this.fb.group({
       source: this.fb.control('', [Validators.required]),
     });
-
-    this.store.dispatch(new GetTodosSource());
 
     this.sourceSub = this.store
       .select((state: IAppState) => state.todosSource.source)
       .subscribe(x => this.source.setValue(x));
   }
 
-  saveAndClose() {
-    this.store.dispatch(new PutTodosSource(this.source.value));
+  ngOnDestroy() {
+    this.routeSub.unsubscribe();
+    this.sourceSub.unsubscribe();
+  }
 
-    this.router.navigate(['/']);
+  saveAndClose() {
+    this.store.dispatch(
+      new PutTodosSource(this.selectedTodoListId, this.source.value)
+    );
+
+    this.router.navigate(['/todo-lists/' + this.selectedTodoListId]);
   }
 }

@@ -11,7 +11,12 @@ const routes: Routes = [
     component: HomeComponent,
   },
   {
-    path: 'todos/source-editor',
+    path: 'todo-lists/:id',
+    pathMatch: 'full',
+    component: HomeComponent,
+  },
+  {
+    path: 'todo-lists/:id/source-editor',
     component: SourceEditorComponent,
     canActivate: [TokenGuard],
   },

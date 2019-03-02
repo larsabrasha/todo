@@ -12,6 +12,8 @@
     <button class="btn btn-dark mr-3" (click)="saveAndClose()">
       Save and close
     </button>
-    <a [routerLink]="['/']" class="text-muted">Cancel</a>
+    <a [routerLink]="['/todo-lists/' + selectedTodoListId]" class="text-muted"
+      >Cancel</a
+    >
   </div>
 </div>

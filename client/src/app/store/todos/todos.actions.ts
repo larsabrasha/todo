@@ -1,5 +1,6 @@
 export class LoadTodoLists {
   static readonly type = '[Todos] Load Todo Lists';
+  constructor(public selectedTodoListId: string) {}
 }
 
 export class SelectTodoList {

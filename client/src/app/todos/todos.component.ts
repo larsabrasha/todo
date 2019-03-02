@@ -6,6 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
 import { Todo } from '../models/todo';
@@ -20,7 +21,6 @@ import {
   DeleteSelectedTodoList,
   LoadTodoLists,
   MoveTodo,
-  SelectTodoList,
   ToggleChecked,
   UpdateSelectedTodoListName,
 } from '../store/todos/todos.actions';
@@ -54,19 +54,29 @@ export class TodosComponent implements OnInit, OnDestroy {
   showingHistory: boolean;
   showingHistorySub: Subscription;
 
+  routeSub: Subscription;
+  selectedTodoListId: string;
+
   form: FormGroup;
 
   ADD_A_TODO = 'Add a todo';
   placeholder = this.ADD_A_TODO;
 
-  constructor(private store: Store, private fb: FormBuilder) {}
+  constructor(
+    private store: Store,
+    private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   get title() {
     return this.form.get('title');
   }
 
   ngOnInit() {
-    this.store.dispatch(new LoadTodoLists());
+    this.routeSub = this.activatedRoute.params.subscribe(routeParams => {
+      this.selectedTodoListId = routeParams['id'];
+      this.store.dispatch(new LoadTodoLists(this.selectedTodoListId));
+    });
 
     this.form = this.fb.group({
       title: this.fb.control('', [Validators.required, Validators.max(500)]),
@@ -79,10 +89,7 @@ export class TodosComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.showingHistorySub.unsubscribe();
-  }
-
-  selectTodoList(id: string) {
-    this.store.dispatch(new SelectTodoList(id));
+    this.routeSub.unsubscribe();
   }
 
   createTodoList() {

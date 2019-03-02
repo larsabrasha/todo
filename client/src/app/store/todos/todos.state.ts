@@ -34,18 +34,28 @@ export class TodosState {
   }
 
   @Action(LoadTodoLists)
-  loadTodoLists(context: StateContext<TodosStateModel>) {
+  loadTodoLists(context: StateContext<TodosStateModel>, action: LoadTodoLists) {
     return this.todoListsService.get().pipe(
       tap(x => {
-        const selectedTodoList = x.length > 0 ? x[0] : null;
+        if (x.length > 0) {
+          let selectedTodoList = x.find(
+            y => y.id === action.selectedTodoListId
+          );
 
-        context.patchState({
-          todoLists: x,
-          selectedTodoListId: selectedTodoList ? selectedTodoList.id : null,
-          selectedTodoListName: selectedTodoList ? selectedTodoList.name : null,
-        });
+          if (selectedTodoList == null) {
+            selectedTodoList = x[0];
+          }
 
-        context.dispatch(new LoadTodos());
+          context.patchState({
+            todoLists: x,
+            selectedTodoListId: selectedTodoList ? selectedTodoList.id : null,
+            selectedTodoListName: selectedTodoList
+              ? selectedTodoList.name
+              : null,
+          });
+
+          context.dispatch(new LoadTodos());
+        }
       })
     );
   }
@@ -78,7 +88,7 @@ export class TodosState {
 
     return this.todoListsService.delete(state.selectedTodoListId).pipe(
       tap(() => {
-        context.dispatch(new LoadTodoLists());
+        context.dispatch(new LoadTodoLists(null));
       })
     );
   }
@@ -123,7 +133,7 @@ export class TodosState {
         })
         .pipe(
           tap(x => {
-            context.dispatch(new LoadTodoLists());
+            context.dispatch(new LoadTodoLists(state.selectedTodoListId));
           })
         );
     }
