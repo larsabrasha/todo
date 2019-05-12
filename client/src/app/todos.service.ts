@@ -23,7 +23,14 @@ export class TodosService {
     );
   }
 
-  postTodo(todoListId: string, todo: Todo): Observable<Todo[]> {
+  postTodoFirst(todoListId: string, todo: Todo): Observable<Todo[]> {
+    return this.httpClient.post<Todo[]>(
+      `api/todo-lists/${todoListId}/todos?position=first`,
+      todo
+    );
+  }
+
+  postTodoLast(todoListId: string, todo: Todo): Observable<Todo[]> {
     return this.httpClient.post<Todo[]>(
       `api/todo-lists/${todoListId}/todos`,
       todo

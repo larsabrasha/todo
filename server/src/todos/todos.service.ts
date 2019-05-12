@@ -45,7 +45,11 @@ export class TodosService {
 
   applyTodoEvent(todoEvent: TodoEvent, todos: Todo[]): Todo[] {
     switch (todoEvent.type) {
-      case TodoEventType.TodoWasAdded: {
+      case TodoEventType.TodoWasAddedFirst: {
+        const payload = todoEvent.payload as TodoWasAddedPayload;
+        return this.applyAddTodoFirst(payload.todo, todos);
+      }
+      case TodoEventType.TodoWasAddedLast: {
         const payload = todoEvent.payload as TodoWasAddedPayload;
         return this.applyAddTodo(payload.todo, todos);
       }
@@ -67,6 +71,10 @@ export class TodosService {
       default:
         return todos;
     }
+  }
+
+  applyAddTodoFirst(todo: Todo, todos: Todo[]): Todo[] {
+    return [todo, ...todos];
   }
 
   applyAddTodo(todo: Todo, todos: Todo[]): Todo[] {

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="mb-1">
       <div class="d-flex">
-        <div *ngIf="(todoLists$ | async) as todoLists">
+        <div *ngIf="todoLists$ | async as todoLists">
           <div class="btn-group">
             <button
               class="btn btn-light btn-sm dropdown-toggle"
@@ -81,53 +81,69 @@
       class="d-block px-2"
     ></app-history-slider>
 
-    <div
-      *ngIf="(todos$ | async) as todos"
-      class="mb-3"
-      cdkDropList
-      (cdkDropListDropped)="drop($event)"
-      [cdkDropListDisabled]="showingHistory"
-    >
+    <div *ngIf="todos$ | async as todos">
+      <div class="mb-2" *ngIf="todos.length > 0">
+        <form [formGroup]="formFirst" (ngSubmit)="onSubmitFirst()" action="#">
+          <input
+            type="text"
+            class="px-3 py-2 form-control gentle"
+            [placeholder]="placeholderFirst"
+            formControlName="titleFirst"
+            style="opacity: 0.5"
+            (focus)="onFocusFirst()"
+            (blur)="onBlurFirst()"
+            *ngIf="!showingHistory"
+          />
+        </form>
+      </div>
+
       <div
-        *ngFor="let todo of todos; index as i"
-        class="list-group-item list-group-item-action p-0"
-        [class.bg-checked]="todo.checked"
-        [class.bg-unchecked]="todo.checked == false"
-        [ngStyle]="{
-          'text-decoration': todo.checked ? 'line-through' : 'none',
-          opacity: todo.checked ? 0.25 : 1
-        }"
-        style="user-select: none; cursor: pointer;"
-        (click)="toggle(i)"
-        cdkDrag
-        [cdkDragData]="todo"
+        class="mb-2"
+        cdkDropList
+        (cdkDropListDropped)="drop($event)"
+        [cdkDropListDisabled]="showingHistory"
       >
-        <div class="d-flex">
-          <div class="px-3 py-2">{{ todo.title }}</div>
-          <div
-            class="px-3 py-2 ml-auto"
-            cdkDragHandle
-            style="cursor: move; opacity: 0.1"
-          >
-            <i class="fa fa-arrows-alt"></i>
+        <div
+          *ngFor="let todo of todos; index as i"
+          class="list-group-item list-group-item-action p-0"
+          [class.bg-checked]="todo.checked"
+          [class.bg-unchecked]="todo.checked == false"
+          [ngStyle]="{
+            'text-decoration': todo.checked ? 'line-through' : 'none',
+            opacity: todo.checked ? 0.25 : 1
+          }"
+          style="user-select: none; cursor: pointer;"
+          (click)="toggle(i)"
+          cdkDrag
+          [cdkDragData]="todo"
+        >
+          <div class="d-flex">
+            <div class="px-3 py-2">{{ todo.title }}</div>
+            <div
+              class="px-3 py-2 ml-auto"
+              cdkDragHandle
+              style="cursor: move; opacity: 0.1"
+            >
+              <i class="fa fa-arrows-alt"></i>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="mb-3">
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" action="#">
-        <input
-          type="text"
-          class="px-3 py-2 form-control gentle"
-          [placeholder]="placeholder"
-          formControlName="title"
-          style="opacity: 0.5"
-          (focus)="onFocus()"
-          (blur)="onBlur()"
-          *ngIf="!showingHistory"
-        />
-      </form>
+      <div class="mb-2">
+        <form [formGroup]="formLast" (ngSubmit)="onSubmitLast()" action="#">
+          <input
+            type="text"
+            class="px-3 py-2 form-control gentle"
+            [placeholder]="placeholderLast"
+            formControlName="titleLast"
+            style="opacity: 0.5"
+            (focus)="onFocusLast()"
+            (blur)="onBlurLast()"
+            *ngIf="!showingHistory"
+          />
+        </form>
+      </div>
     </div>
 
     <div class="mb-1 text-center">

@@ -25,8 +25,11 @@ export class HistoryState {
       let title = '';
       let summary = '';
 
-      if (x.type === TodoEventType.TodoWasAdded) {
-        title = 'Todo was added';
+      if (x.type === TodoEventType.TodoWasAddedFirst) {
+        title = 'Todo was added first';
+        summary = `"${(x.payload as TodoWasAddedPayload).todo.title}"`;
+      } else if (x.type === TodoEventType.TodoWasAddedLast) {
+        title = 'Todo was added last';
         summary = `"${(x.payload as TodoWasAddedPayload).todo.title}"`;
       } else if (x.type === TodoEventType.TodoWasUpdated) {
         title = 'Todo was updated';

@@ -31,8 +31,13 @@ export class ToggleChecked {
   constructor(public index: number) {}
 }
 
-export class AddTodo {
-  static readonly type = '[Todos] Add Todo';
+export class AddTodoFirst {
+  static readonly type = '[Todos] Add Todo First';
+  constructor(public title: string) {}
+}
+
+export class AddTodoLast {
+  static readonly type = '[Todos] Add Todo Last';
   constructor(public title: string) {}
 }
 

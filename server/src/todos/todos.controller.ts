@@ -56,14 +56,22 @@ export class TodosController {
   addTodo(
     @Param('todoListId') todoListId: string,
     @Body() todo: Todo,
+    @Query('position') position: string,
     @Req() req
   ): Todo[] {
-    return this.todosService.handleTodoEvent(todoListId, {
-      userId: this.getSub(req),
-      timestamp: new Date().getTime(),
-      type: TodoEventType.TodoWasAdded,
-      payload: { todo },
-    });
+    return position === 'first'
+      ? this.todosService.handleTodoEvent(todoListId, {
+          userId: this.getSub(req),
+          timestamp: new Date().getTime(),
+          type: TodoEventType.TodoWasAddedFirst,
+          payload: { todo },
+        })
+      : this.todosService.handleTodoEvent(todoListId, {
+          userId: this.getSub(req),
+          timestamp: new Date().getTime(),
+          type: TodoEventType.TodoWasAddedLast,
+          payload: { todo },
+        });
   }
 
   @Put(':index')

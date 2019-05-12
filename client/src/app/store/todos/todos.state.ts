@@ -4,7 +4,8 @@ import { TodoListsService } from 'src/app/todo-lists.service';
 import { TodosService } from 'src/app/todos.service';
 import { HideHistory } from '../layout/layout.actions';
 import {
-  AddTodo,
+  AddTodoFirst,
+  AddTodoLast,
   CreateTodoList,
   DeleteCompletedTodos,
   DeleteSelectedTodoList,
@@ -177,8 +178,25 @@ export class TodosState {
     );
   }
 
-  @Action(AddTodo)
-  addTodo(context: StateContext<TodosStateModel>, action: AddTodo) {
+  @Action(AddTodoFirst)
+  addTodoFirst(context: StateContext<TodosStateModel>, action: AddTodoFirst) {
+    const state = context.getState();
+
+    const newTodo = {
+      title: action.title,
+      checked: false,
+    };
+
+    const todos = [newTodo, ...state.todos];
+    context.patchState({
+      todos: todos,
+    });
+
+    return this.todoService.postTodoFirst(state.selectedTodoListId, newTodo);
+  }
+
+  @Action(AddTodoLast)
+  addTodoLast(context: StateContext<TodosStateModel>, action: AddTodoLast) {
     const state = context.getState();
 
     const newTodo = {
@@ -191,7 +209,7 @@ export class TodosState {
       todos: todos,
     });
 
-    return this.todoService.postTodo(state.selectedTodoListId, newTodo);
+    return this.todoService.postTodoLast(state.selectedTodoListId, newTodo);
   }
 
   @Action(MoveTodo)

@@ -15,7 +15,8 @@ import { TodoList } from '../models/todo-list';
 import { IAppState } from '../store/app.state';
 import { ToggleHistory } from '../store/layout/layout.actions';
 import {
-  AddTodo,
+  AddTodoFirst,
+  AddTodoLast,
   CreateTodoList,
   DeleteCompletedTodos,
   DeleteSelectedTodoList,
@@ -56,10 +57,12 @@ export class TodosComponent implements OnInit, OnDestroy {
 
   routeSub: Subscription;
 
-  form: FormGroup;
+  formFirst: FormGroup;
+  formLast: FormGroup;
 
   ADD_A_TODO = 'Add a todo';
-  placeholder = this.ADD_A_TODO;
+  placeholderFirst = this.ADD_A_TODO;
+  placeholderLast = this.ADD_A_TODO;
 
   constructor(
     private store: Store,
@@ -67,8 +70,12 @@ export class TodosComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute
   ) {}
 
-  get title() {
-    return this.form.get('title');
+  get titleFirst() {
+    return this.formFirst.get('titleFirst');
+  }
+
+  get titleLast() {
+    return this.formLast.get('titleLast');
   }
 
   ngOnInit() {
@@ -76,8 +83,18 @@ export class TodosComponent implements OnInit, OnDestroy {
       this.store.dispatch(new LoadTodoLists(routeParams['id']));
     });
 
-    this.form = this.fb.group({
-      title: this.fb.control('', [Validators.required, Validators.max(500)]),
+    this.formFirst = this.fb.group({
+      titleFirst: this.fb.control('', [
+        Validators.required,
+        Validators.max(500),
+      ]),
+    });
+
+    this.formLast = this.fb.group({
+      titleLast: this.fb.control('', [
+        Validators.required,
+        Validators.max(500),
+      ]),
     });
 
     this.showingHistorySub = this.store
@@ -122,13 +139,24 @@ export class TodosComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmit() {
+  onSubmitFirst() {
     if (!this.showingHistory) {
-      const title = this.form.value.title.trim();
+      const title = this.titleFirst.value.trim();
 
       if (title !== '') {
-        this.store.dispatch(new AddTodo(this.form.value.title));
-        this.title.setValue('');
+        this.store.dispatch(new AddTodoFirst(title));
+        this.titleFirst.setValue('');
+      }
+    }
+  }
+
+  onSubmitLast() {
+    if (!this.showingHistory) {
+      const title = this.titleLast.value.trim();
+
+      if (title !== '') {
+        this.store.dispatch(new AddTodoLast(title));
+        this.titleLast.setValue('');
       }
     }
   }
@@ -147,11 +175,19 @@ export class TodosComponent implements OnInit, OnDestroy {
     this.store.dispatch(new MoveTodo(event.previousIndex, event.currentIndex));
   }
 
-  onFocus() {
-    this.placeholder = '';
+  onFocusFirst() {
+    this.placeholderFirst = '';
   }
 
-  onBlur() {
-    this.placeholder = this.ADD_A_TODO;
+  onFocusLast() {
+    this.placeholderLast = '';
+  }
+
+  onBlurFirst() {
+    this.placeholderFirst = this.ADD_A_TODO;
+  }
+
+  onBlurLast() {
+    this.placeholderLast = this.ADD_A_TODO;
   }
 }
