@@ -1,7 +1,11 @@
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Action, State, StateContext } from '@ngxs/store';
-import { TokenWasUpdated, UserDidLogout } from './user-context.actions';
+import {
+  TokenWasUpdated,
+  UpdateToken,
+  UserDidLogout,
+} from './user-context.actions';
 import { defaults, UserContextStateModel } from './user-context.model';
 
 @State<UserContextStateModel>({
@@ -10,6 +14,13 @@ import { defaults, UserContextStateModel } from './user-context.model';
 })
 export class UserContextState {
   constructor(private router: Router, private ngZone: NgZone) {}
+
+  @Action(UpdateToken)
+  updateToken(context: StateContext<UserContextStateModel>) {
+    context.patchState({
+      updateTokenTimestamp: new Date(),
+    });
+  }
 
   @Action(TokenWasUpdated)
   tokenWasUpdate(

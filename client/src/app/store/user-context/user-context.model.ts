@@ -3,6 +3,7 @@ export class UserContextStateModel {
   email: string;
   name: string;
   isAuthenticated: boolean | null;
+  updateTokenTimestamp: Date;
 }
 
 export const defaults: UserContextStateModel = {
@@ -10,4 +11,5 @@ export const defaults: UserContextStateModel = {
   email: null,
   name: null,
   isAuthenticated: null,
+  updateTokenTimestamp: null,
 };

@@ -15,6 +15,7 @@ import { environment } from '../environments/environment';
 import { IAppState } from './store/app.state';
 import {
   TokenWasUpdated,
+  UpdateToken,
   UserDidLogout,
 } from './store/user-context/user-context.actions';
 
@@ -31,6 +32,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   isAuthenticated: boolean | null;
   isAuthenticatedSub: Subscription;
+
+  updateTokenTimestampSub: Subscription;
 
   trustedSsoIframeUrl: SafeUrl;
 
@@ -64,10 +67,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
         console.log('isAuthenticated', this.isAuthenticated);
       });
+
+    this.updateTokenTimestampSub = this.store
+      .select((state: IAppState) => state.userContext.updateTokenTimestamp)
+      .subscribe(x => {
+        this.updateToken();
+      });
   }
 
   ngOnDestroy() {
     this.isAuthenticatedSub.unsubscribe();
+    this.updateTokenTimestampSub.unsubscribe();
   }
 
   handleWindowMessage(event: any) {
@@ -84,16 +94,20 @@ export class AppComponent implements OnInit, OnDestroy {
       );
 
       if (message.type === 'ready') {
-        this.sso.nativeElement.contentWindow.postMessage(
-          `{"type": "getToken", "data": "${this.ssoConfig.aud}"}`,
-          this.ssoConfig.url
-        );
+        this.store.dispatch(new UpdateToken());
       } else if (message.type === 'token') {
         this.store.dispatch(new TokenWasUpdated(message.data));
       } else if (message.type === 'userDidLogout') {
         this.store.dispatch(new UserDidLogout());
       }
     }
+  }
+
+  updateToken() {
+    this.sso.nativeElement.contentWindow.postMessage(
+      `{"type": "getToken", "data": "${this.ssoConfig.aud}"}`,
+      this.ssoConfig.url
+    );
   }
 
   login() {
