@@ -27,7 +27,7 @@ import {
 export class AppComponent implements OnInit, OnDestroy {
   ssoConfig = environment.ssoConfig;
 
-  @ViewChild('sso')
+  @ViewChild('sso', { static: true })
   sso: ElementRef;
 
   isAuthenticated: boolean | null;
