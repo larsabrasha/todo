@@ -11,7 +11,7 @@ FROM nginx:1.15-alpine
 COPY --from=node /app/robots.txt /usr/share/nginx/html
 COPY --from=node /app/dist/client /usr/share/nginx/html
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-CMD find /usr/share/nginx/html/main.*.js -type f -exec \
+CMD find /usr/share/nginx/html/main*.js -type f -exec \
   sed -i \
   -e 's,$SSO_URL,'"$SSO_URL"',' \
   -e 's,$SSO_IFRAME_URL,'"$SSO_IFRAME_URL"',' \
