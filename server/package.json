@@ -21,7 +21,7 @@
   "dependencies": {
     "@nestjs/common": "^5.7.2",
     "@nestjs/core": "^5.7.2",
-    "@nestjs/jwt": "^0.3.0",
+    "@nestjs/jwt": "^10.0.1",
     "@nestjs/microservices": "^5.7.2",
     "@nestjs/testing": "^5.7.2",
     "@nestjs/websockets": "^5.7.2",
